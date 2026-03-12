@@ -1,0 +1,10 @@
+[
+  {
+    "header": "test",
+    "command": "chybag"
+  },
+  {
+    "header": "shutdown",
+    "command": "shutdown -s -t 3200"
+  }
+]

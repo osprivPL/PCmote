@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="PCmote/PCmote-server.csproj" />
+  <Project Path="PCmotePhone/PCmotePhone.csproj" Id="838f0911-88ce-4401-beac-9d44d05cb2cb">
+    <Deploy Solution="Debug|*" />
+  </Project>
+</Solution>

@@ -1,0 +1,17 @@
+[
+  {
+    "Name": "2naraz",
+    "Projects": [
+      {
+        "Path": "PCmote\\PCmote-server.csproj",
+        "Action": "Start",
+        "DebugTarget": "PCmote-server"
+      },
+      {
+        "Path": "PCmotePhone\\PCmotePhone.csproj",
+        "Action": "Start",
+        "DebugTarget": "Samsung SM-A566B (Android 16.0 - API 36)"
+      }
+    ]
+  }
+]

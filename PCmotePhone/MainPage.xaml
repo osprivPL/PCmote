@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PCmotePhone.MainPage">
+
+    <ScrollView>
+        <Grid VerticalOptions="Center" Padding="20">
+
+            <VerticalStackLayout x:Name="ConnectionLayout" Spacing="15" IsVisible="True">
+                <Label Text="Connect to server" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" />
+
+                <Entry x:Name="IpEntry" Placeholder="Computer IP (for example: 192.168.1.15)" Keyboard="Url" 
+                        Text="192.168.15.104"/>
+                <!--Text="192.168.15.104" -->
+                <Entry x:Name="PortEntry" Placeholder="Port (for example: 5555)" Keyboard="Numeric" Text="5555" />
+
+                <Button Text="Connect" HeightRequest="50" Clicked="ConnectBtn_Clicked" />
+
+                <Label x:Name="ErrorLabel" TextColor="Red" HorizontalOptions="Center" IsVisible="False" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout x:Name="MenuLayout" VerticalOptions="Center" IsVisible="False">
+                <Button Margin="16" WidthRequest="250" HeightRequest="60" Text="Pilot mode 🔥🔥🔥" Clicked="openPilot"/>
+                <Button Margin="16" WidthRequest="250" HeightRequest="60" Text="Commands" Clicked="openCommands"/>
+                <Button Margin="16" WidthRequest="250" HeightRequest="60" Text="Disconnect (Change IP)" Clicked="DisconnectBtn_Clicked"/>
+            </VerticalStackLayout>
+
+        </Grid>
+    </ScrollView>
+
+</ContentPage>

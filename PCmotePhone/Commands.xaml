@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PCmotePhone.Commands"
+             Title="Commands">
+
+    <Grid RowDefinitions="*, Auto" Padding="16">
+        <!-- Górna część - ScrollView zajmuje całą dostępną przestrzeń -->
+        <ScrollView Grid.Row="0">
+            <VerticalStackLayout x:Name="commandsView">
+                <!--<Border StrokeShape="RoundRectangle 12" StrokeThickness="1" Stroke="Gray"
+                        BackgroundColor="{DynamicResource PageBackgroundColor}" Margin="10,5">
+                    <Grid ColumnDefinitions="*, Auto" Padding="15" ColumnSpacing="15">
+                        <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="4">
+                            <Label Text="Shutdown 2h" FontSize="16" FontAttributes="Bold" 
+                                TextColor="{DynamicResource PrimaryTextColor}"/>
+                            <Label Text="shutdown -s -t 7200" FontSize="13" TextColor="Gray"/>
+                        </VerticalStackLayout>
+
+                        <Button Grid.Column="1" Text="Execute" BackgroundColor="{DynamicResource Primary}"
+                            TextColor="White" CornerRadius="8" FontAttributes="Bold" Padding="20,0"
+                            HeightRequest="40" VerticalOptions="Center" />
+                    </Grid>
+                </Border>-->
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Dolna część - Border zawsze na dole -->
+        <Border Grid.Row="1"
+                StrokeThickness="1" 
+                StrokeShape="RoundRectangle 10" 
+                HorizontalOptions="Center"
+                Padding="10,0"
+                Margin="0,16,0,0">
+            <Grid ColumnDefinitions="*, Auto" WidthRequest="310" HeightRequest="45">
+                <Entry x:Name="CommandEntry"
+                       Grid.Column="0"
+                       Placeholder="Write command..."
+                       Keyboard="Text" 
+                       ReturnType="Send"
+                       VerticalOptions="Center"/>
+
+                <Button Grid.Column="1"
+                             Text="OK"
+                             TextColor="{AppThemeBinding Light=Black, Dark=White}"
+                             VerticalOptions="Center"
+                             HeightRequest="50"
+                             WidthRequest="50"
+                             Margin="5,0,0,0"
+                             BackgroundColor="Transparent"
+                        Clicked="sendCommand"/>
+            </Grid>
+        </Border>
+    </Grid>
+</ContentPage>
