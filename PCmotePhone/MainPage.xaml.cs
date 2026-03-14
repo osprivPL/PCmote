@@ -65,7 +65,7 @@ namespace PCmotePhone
                     // socket.Poll z SelectRead zwraca true jeśli przyszły dane LUB jeśli przerwano połączenie.
                     // socket.Available mówi nam, ile bajtów czeka na odczyt.
                     // Zatem: jeśli Poll = true, ale Available = 0, to wiemy na 100%, że to rozłączenie (brak danych, a gniazdo reaguje).
-                    if (socket.Poll(1000, SelectMode.SelectRead) && socket.Available == 0)
+                    if ((socket == null) || (socket.Poll(1000, SelectMode.SelectRead) && socket.Available == 0))
                     {
                         break; // Serwer zamknął połączenie
                     }

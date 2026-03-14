@@ -10,7 +10,7 @@
                 <Label Text="Connect to server" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" />
 
                 <Entry x:Name="IpEntry" Placeholder="Computer IP (for example: 192.168.1.15)" Keyboard="Url" 
-                        Text="192.168.15.104"/>
+                        Text="192.168.1.12"/>
                 <!--Text="192.168.15.104" -->
                 <Entry x:Name="PortEntry" Placeholder="Port (for example: 5555)" Keyboard="Numeric" Text="5555" />
 

@@ -13,15 +13,25 @@ namespace PCmote_Server
     {
         [DllImport("user32.dll")]
         static extern void mouse_event(int dwFlags, int dx, int dy, int dwData, int dwExtraInfo);
+        static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+        static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, int dwExtraInfo);
+        static extern bool lockWorkStation();
 
-        
         private const int MOUSEEVENTF_MOVE = 0x0001;
+        private const uint WM_APPCOMMAND = 0x0319;
+        private static readonly IntPtr HWND_BROADCAST = (IntPtr)0xffff;
+        private const byte WIN_KEY = 0x58;
+        private const byte D_KEY = 0x44;
+        private const byte ALT_KEY = 0x12;
+        private const byte F4_KEY = 0x73;
+        private const byte KEYUP = 0x0002;
 
-        private static readonly string jsonName = "commandsPreset.json";
-        private static string jsonContent;
-        private static List<ShellCommand> commands;
 
-
+        private static readonly string commandsJson = "commandsPreset.json";
+        private static readonly string settingsJson = "settings.json";
+        private static string commandsJsonContent;
+        
+        
 
 
         public static readonly List<string> DangerousCommands = new List<string>
@@ -45,33 +55,27 @@ namespace PCmote_Server
             "sudo", "rm", "mv", "chown", "chmod", "mkfs", "dd"
         };
 
-        public static bool logs = false;
+        private static bool logs;
+        private static int port;
+        private static List<ShellCommand> commands;
 
         static void Main(string[] args)
         {
-            if (!File.Exists(jsonName))
-            {
-                File.WriteAllText(jsonName, "[]");
-            }
 
-            jsonContent = File.ReadAllText(jsonName);
-            commands = JsonSerializer.Deserialize<List<ShellCommand>>(jsonContent);
+            readSettings();
+            readCommands();
 
             Console.OutputEncoding = Encoding.UTF8;
 
             showLogo();
             showNetworkInfo();
 
-            Console.WriteLine("\nSpecify the port to listen to (default: 5555):");
-            string portInput = Console.ReadLine();
-            int port = string.IsNullOrWhiteSpace(portInput) ? 5555 : int.Parse(portInput);
-
             TcpListener server = new TcpListener(IPAddress.Any, port);
             server.Start();
             Console.WriteLine($"\n[Server] Started. Waiting for connection on {port}...");
 
             // nasluchiwanie polaczenia w tle (nie blokuje cmdka)
-            Task.Run(() => AcceptClientsLoop(server));
+            Task.Run(() => acceptClientsLoop(server));
 
             showOptions();
 
@@ -84,24 +88,24 @@ namespace PCmote_Server
                     case "1":
                         showOptions();
                         break;
-                    case "2":
+                    /*case "2":
                         logs = !logs;
                         clearConsole();
                         Console.WriteLine(logs ? "\n>>> LOGGING ENABLED <<<" : "\n>>> LOGGING DISABLED <<<");
-                        break;
-                    case "3":
+                        break;*/
+                    case "2":
                         clearConsole();
                         break;
-                    case "4":
+                    case "3":
                         showNetworkInfo();
                         break;
-                    case "5":
+                    case "4":
                         showPreparedCommands();
                         break;
-                    case "6":
+                    case "5":
                         addCommand();
                         break;
-                    case "7":
+                    case "6":
                         editCommands();
                         break;
                     case "0":
@@ -113,7 +117,41 @@ namespace PCmote_Server
                 }
             }
         }        
-        static void AcceptClientsLoop(TcpListener server)
+
+        public static void readCommands()
+        {
+            if (!File.Exists(commandsJson))
+            {
+                File.WriteAllText(commandsJson, "[]");
+            }
+
+            commandsJsonContent = File.ReadAllText(commandsJson);
+            commands = JsonSerializer.Deserialize<List<ShellCommand>>(commandsJsonContent);
+        }
+        public static void readSettings()
+        {
+            try
+            {
+                string jsonString = File.ReadAllText(settingsJson);
+
+                using (JsonDocument doc = JsonDocument.Parse(jsonString))
+                {
+                    JsonElement root = doc.RootElement;
+                    logs = root.GetProperty("logs").GetBoolean();
+                    port = int.Parse(root.GetProperty("port").GetString());
+                }
+            }
+            catch (Exception ex)
+            {
+                port = 5555;
+                logs = false;
+                Console.WriteLine("Something went wrong with reading \"settings.json\", using default values:");
+                Console.WriteLine($"port: {port}");
+                Console.WriteLine($"logs: {(logs ? "on" : "off")}");
+            }
+            
+        }
+        public static void acceptClientsLoop(TcpListener server)
         {
             while (true)
             {
@@ -123,7 +161,7 @@ namespace PCmote_Server
                 if (logs) Console.WriteLine($"\n[Server] Connected with client: {clientIp}");
 
 
-                Task.Run(() => HandleClient(client, clientIp));
+                Task.Run(() => handleClient(client, clientIp));
             }
         }
 
@@ -153,12 +191,12 @@ namespace PCmote_Server
         {
             Console.WriteLine("\n--- MENU ---");
             Console.WriteLine("1 - Show this menu");
-            Console.WriteLine("2 - " + (logs ? "Stop" : "Start") + " logging");
-            Console.WriteLine("3 - Clear Console");
-            Console.WriteLine("4 - Show network info");
-            Console.WriteLine("5 - Show prepared commands");
-            Console.WriteLine("6 - Add prepared command");
-            Console.WriteLine("7 - Edit prepared commands");
+            //Console.WriteLine("2 - " + (logs ? "Stop" : "Start") + " logging");
+            Console.WriteLine("2 - Clear Console");
+            Console.WriteLine("3 - Show network info");
+            Console.WriteLine("4 - Show prepared commands");
+            Console.WriteLine("5 - Add prepared command");
+            Console.WriteLine("6 - Edit prepared commands");
             Console.WriteLine("\n0 - Exit");
             Console.WriteLine("------------");
         }
@@ -204,8 +242,8 @@ namespace PCmote_Server
 
             commands.Add(new ShellCommand(newHeader, newCommand));
 
-            jsonContent = JsonSerializer.Serialize(commands, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(jsonName, jsonContent);
+            commandsJsonContent = JsonSerializer.Serialize(commands, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(commandsJson, commandsJsonContent);
 
             clearConsole();
             Console.WriteLine("\nCommand created successfully!");
@@ -236,8 +274,8 @@ namespace PCmote_Server
                     string newCommand = Console.ReadLine();
                     if (!string.IsNullOrWhiteSpace(newCommand)) commands[choose].command = newCommand;
 
-                    jsonContent = JsonSerializer.Serialize(commands, new JsonSerializerOptions { WriteIndented = true });
-                    File.WriteAllText(jsonName, jsonContent);
+                    commandsJsonContent = JsonSerializer.Serialize(commands, new JsonSerializerOptions { WriteIndented = true });
+                    File.WriteAllText(commandsJson, commandsJsonContent);
 
                     clearConsole();
 
@@ -256,7 +294,7 @@ namespace PCmote_Server
             }
         }
 
-        static void HandleClient(TcpClient client, string clientIp)
+        public static void handleClient(TcpClient client, string clientIp)
         {
             try
             {
@@ -300,7 +338,7 @@ namespace PCmote_Server
 
                         if (command == "GET_JSON")
                         {
-                            byte[] jsonBytes = Encoding.UTF8.GetBytes(jsonContent);
+                            byte[] jsonBytes = Encoding.UTF8.GetBytes(commandsJsonContent);
                             stream.WriteAsync(jsonBytes, 0, jsonBytes.Length);
                             if (logs) Console.WriteLine($"[Server] Sent JSON to client ({jsonBytes.Length} bytes)");
                             continue;
@@ -357,6 +395,82 @@ namespace PCmote_Server
                 if (logs) Console.WriteLine($"\n[Server] Disconnected from client: {clientIp}");
                 client.Close();
             }
+        }
+
+        private static IntPtr calculateParam(int comm)
+        {
+            return (IntPtr)((comm << 16));
+        }
+
+        private static void prevTrack() {
+            SendMessage(HWND_BROADCAST, WM_APPCOMMAND, IntPtr.Zero, calculateParam(12));
+        }
+
+        private static void playPauseResume()
+        {
+            SendMessage(HWND_BROADCAST, WM_APPCOMMAND, IntPtr.Zero, calculateParam(14));
+        }
+
+        private static void nextTrack()
+        {
+            SendMessage(HWND_BROADCAST, WM_APPCOMMAND, IntPtr.Zero, calculateParam(11));
+        }
+
+
+        private static void volDown()
+        {
+            SendMessage(HWND_BROADCAST, WM_APPCOMMAND, IntPtr.Zero, calculateParam(9));
+        }
+
+        private static void volUp()
+        {
+            SendMessage(HWND_BROADCAST, WM_APPCOMMAND, IntPtr.Zero, calculateParam(10));
+        }
+        private static void volMute()
+        {
+            SendMessage(HWND_BROADCAST, WM_APPCOMMAND, IntPtr.Zero, calculateParam(8));
+        }
+
+        private static void leftMouseButton()
+        {
+            mouse_event(0x02, 0, 0, 0, 0); // w dol
+            mouse_event(0x04, 0, 0, 0, 0); // w gore
+        }
+
+        private static void rightMouseButton()
+        {
+            mouse_event(0x08, 0, 0, 0, 0); // w dol
+            mouse_event(0x10, 0, 0, 0, 0); // w gore
+        }
+        
+        private static void scrollUp()
+        {
+            mouse_event(0x0800, 0, 0, 120, 0);
+        }
+        private static void scrollDown()
+        {
+            mouse_event(0x0800, 0, 0, -120, 0);
+        }
+
+        private static void showDesktop()
+        {
+            keybd_event(WIN_KEY, 0, 0, 0);
+            keybd_event(D_KEY, 0, 0, 0);
+            keybd_event(WIN_KEY, 0, KEYUP, 0);
+            keybd_event(D_KEY, 0, KEYUP, 0);
+        }
+
+        private static void closeApp()
+        {
+            keybd_event(ALT_KEY, 0, 0, 0);
+            keybd_event(F4_KEY, 0, 0, 0);
+            keybd_event(ALT_KEY, 0, KEYUP, 0);
+            keybd_event(F4_KEY, 0, KEYUP, 0);
+        }
+
+        private static void lockPC()
+        {
+            lockWorkStation();
         }
     }
 }

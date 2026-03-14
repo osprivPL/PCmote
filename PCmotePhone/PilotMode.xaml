@@ -3,35 +3,71 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="PCmotePhone.PilotMode"
              Title="PilotMode">
-    <Grid RowDefinitions="Auto, Auto" 
-      ColumnDefinitions="*, *, *" 
-      RowSpacing="15" 
-      ColumnSpacing="15" 
-      Padding="20"
-      VerticalOptions="Center">
+    <ScrollView>
+        <VerticalStackLayout Spacing="20" Padding="15">
 
-        <Button Grid.Row="0" Grid.Column="0" Text="⏪" FontSize="24" 
-            BackgroundColor="{DynamicResource Primary}" TextColor="White" 
-            CornerRadius="12" HeightRequest="65"/>
+            <Border StrokeShape="RoundRectangle 15" 
+                StrokeThickness="1" Stroke="Gray" 
+                BackgroundColor="{DynamicResource PageBackgroundColor}" 
+                Padding="15">
+                <Grid ColumnDefinitions="*, Auto, *" ColumnSpacing="15" VerticalOptions="Center">
 
-        <Button Grid.Row="0" Grid.Column="1" Text="⏯" FontSize="24" 
-            BackgroundColor="{DynamicResource Primary}" TextColor="White" 
-            CornerRadius="12" HeightRequest="65"/>
+                    <Button Grid.Column="0" Text="Lewy" FontSize="16" FontAttributes="Bold"
+                        BackgroundColor="{DynamicResource Primary}" TextColor="White" 
+                        CornerRadius="12" HeightRequest="90" />
 
-        <Button Grid.Row="0" Grid.Column="2" Text="⏩" FontSize="24" 
-            BackgroundColor="{DynamicResource Primary}" TextColor="White" 
-            CornerRadius="12" HeightRequest="65"/>
+                    <VerticalStackLayout Grid.Column="1" Spacing="10" VerticalOptions="Center">
+                        <Button Text="▲" FontSize="18" WidthRequest="50" HeightRequest="40" 
+                            BackgroundColor="{DynamicResource Secondary}" TextColor="White" CornerRadius="8" />
+                        <Button Text="▼" FontSize="18" WidthRequest="50" HeightRequest="40" 
+                            BackgroundColor="{DynamicResource Secondary}" TextColor="White" CornerRadius="8" />
+                    </VerticalStackLayout>
 
-        <Button Grid.Row="1" Grid.Column="0" Text="🔉" FontSize="24" 
-            BackgroundColor="{DynamicResource Secondary}" TextColor="White" 
-            CornerRadius="12" HeightRequest="65"/>
+                    <Button Grid.Column="2" Text="Prawy" FontSize="16" FontAttributes="Bold"
+                        BackgroundColor="{DynamicResource Primary}" TextColor="White" 
+                        CornerRadius="12" HeightRequest="90" />
+                </Grid>
+            </Border>
 
-        <Button Grid.Row="1" Grid.Column="1" Text="🔇" FontSize="24" 
-            BackgroundColor="{DynamicResource Secondary}" TextColor="White" 
-            CornerRadius="12" HeightRequest="65"/>
+            <Border StrokeShape="RoundRectangle 15" 
+                StrokeThickness="1" Stroke="Gray" 
+                BackgroundColor="{DynamicResource PageBackgroundColor}" 
+                Padding="15">
+                <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, *, *" RowSpacing="15" ColumnSpacing="15">
 
-        <Button Grid.Row="1" Grid.Column="2" Text="🔊" FontSize="24" 
-            BackgroundColor="{DynamicResource Secondary}" TextColor="White" 
-            CornerRadius="12" HeightRequest="65"/>
-    </Grid>
+                    <Button Grid.Row="0" Grid.Column="0" Text="⏪" FontSize="24" 
+                        BackgroundColor="{DynamicResource Primary}" TextColor="White" CornerRadius="12" HeightRequest="65" />
+                    <Button Grid.Row="0" Grid.Column="1" Text="⏯" FontSize="24" 
+                        BackgroundColor="{DynamicResource Primary}" TextColor="White" CornerRadius="12" HeightRequest="65" />
+                    <Button Grid.Row="0" Grid.Column="2" Text="⏩" FontSize="24" 
+                        BackgroundColor="{DynamicResource Primary}" TextColor="White" CornerRadius="12" HeightRequest="65" />
+
+                    <Button Grid.Row="1" Grid.Column="0" Text="🔉" FontSize="24" 
+                        BackgroundColor="{DynamicResource Secondary}" TextColor="White" CornerRadius="12" HeightRequest="65" />
+                    <Button Grid.Row="1" Grid.Column="1" Text="🔇" FontSize="24" 
+                        BackgroundColor="{DynamicResource Secondary}" TextColor="White" CornerRadius="12" HeightRequest="65" />
+                    <Button Grid.Row="1" Grid.Column="2" Text="🔊" FontSize="24" 
+                        BackgroundColor="{DynamicResource Secondary}" TextColor="White" CornerRadius="12" HeightRequest="65" />
+                </Grid>
+            </Border>
+
+            <Border StrokeShape="RoundRectangle 15" 
+                StrokeThickness="1" Stroke="Gray" 
+                BackgroundColor="{DynamicResource PageBackgroundColor}" 
+                Padding="15">
+                <Grid ColumnDefinitions="*, *, *" ColumnSpacing="10">
+
+                    <Button Grid.Column="0" Text="🖥️ Pulpit" FontSize="13" FontAttributes="Bold"
+                        BackgroundColor="{DynamicResource Primary}" TextColor="White" CornerRadius="10" HeightRequest="60" />
+
+                    <Button Grid.Column="1" Text="🔒 Blokada" FontSize="13" FontAttributes="Bold"
+                        BackgroundColor="{DynamicResource Primary}" TextColor="White" CornerRadius="10" HeightRequest="60" />
+
+                    <Button Grid.Column="2" Text="❌ Zamknij" FontSize="13" FontAttributes="Bold"
+                        BackgroundColor="#D32F2F" TextColor="White" CornerRadius="10" HeightRequest="60" />
+                </Grid>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>
