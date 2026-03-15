@@ -84,8 +84,7 @@ Contributions are welcome! If you have suggestions or want to add a feature:
 3. Commit your Changes (`git commit -m 'Add NewFeature'`)
 4. Push to the Branch (`git push origin feature/NewFeature`)
 5. Open a Pull Request
-
-6. 
+ 
 # 📄 License
   Distributed under the MIT License. See LICENSE for more information.
 
