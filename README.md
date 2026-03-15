@@ -43,7 +43,7 @@
 
 ### Prerequisites
 - **Server:** A Windows OS PC with .NET 10 Runtime installed.
-- **Client:** An Android, iOS, or Windows device to run the MAUI application.
+- **Client:** An Android, iOS, or Windows device to run the MAUI application. (Tested on android only)
 
 ### Setup Instructions
 
