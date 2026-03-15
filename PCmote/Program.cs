@@ -13,18 +13,24 @@ namespace PCmote_Server
     {
         [DllImport("user32.dll")]
         static extern void mouse_event(int dwFlags, int dx, int dy, int dwData, int dwExtraInfo);
-        static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+        [DllImport("user32.dll")]
+        static extern IntPtr PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+        [DllImport("user32.dll")]
         static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, int dwExtraInfo);
-        static extern bool lockWorkStation();
+        [DllImport("user32.dll")]
+        static extern bool LockWorkStation();
+        [DllImport("user32.dll")]
+        static extern IntPtr GetForegroundWindow();
 
         private const int MOUSEEVENTF_MOVE = 0x0001;
         private const uint WM_APPCOMMAND = 0x0319;
         private static readonly IntPtr HWND_BROADCAST = (IntPtr)0xffff;
-        private const byte WIN_KEY = 0x58;
+        private const byte WIN_KEY = 0x5B;
         private const byte D_KEY = 0x44;
         private const byte ALT_KEY = 0x12;
         private const byte F4_KEY = 0x73;
         private const byte KEYUP = 0x0002;
+        private const uint WM_CLOSE = 0x0010;
 
 
         private static readonly string commandsJson = "commandsPreset.json";
@@ -366,11 +372,11 @@ namespace PCmote_Server
                         {
                             volMute();
                         }
-                        else if (command == "PIL_LEFTMOUSEBUTTON")
+                        else if (command == "PIL_LEFTMOUSEBTN")
                         {
                             leftMouseButton();
                         }
-                        else if (command == "PIL_RIGHTMOUSEBUTTON")
+                        else if (command == "PIL_RIGHTMOUSEBTN")
                         {
                             rightMouseButton();
                         }
@@ -451,6 +457,12 @@ namespace PCmote_Server
             }
         }
 
+        private static void sendKey(byte key)
+        {
+            keybd_event(key, 0, 0, 0);
+            keybd_event(key, 0, KEYUP, 0);
+        }
+
         private static IntPtr calculateParam(int comm)
         {
             return (IntPtr)((comm << 16));
@@ -458,32 +470,32 @@ namespace PCmote_Server
 
         private static void prevTrack()
         {
-            SendMessage(HWND_BROADCAST, WM_APPCOMMAND, IntPtr.Zero, calculateParam(12));
+            sendKey(0xB1);
         }
 
         private static void playPauseResume()
         {
-            SendMessage(HWND_BROADCAST, WM_APPCOMMAND, IntPtr.Zero, calculateParam(14));
+            sendKey(0xB3);
         }
 
         private static void nextTrack()
         {
-            SendMessage(HWND_BROADCAST, WM_APPCOMMAND, IntPtr.Zero, calculateParam(11));
+            sendKey(0xB0);
         }
 
 
         private static void volDown()
         {
-            SendMessage(HWND_BROADCAST, WM_APPCOMMAND, IntPtr.Zero, calculateParam(9));
+            sendKey(0xAE);
         }
 
         private static void volUp()
         {
-            SendMessage(HWND_BROADCAST, WM_APPCOMMAND, IntPtr.Zero, calculateParam(10));
+            sendKey(0xAF);
         }
         private static void volMute()
         {
-            SendMessage(HWND_BROADCAST, WM_APPCOMMAND, IntPtr.Zero, calculateParam(8));
+            sendKey(0xAD);
         }
 
         private static void leftMouseButton()
@@ -509,23 +521,25 @@ namespace PCmote_Server
 
         private static void showDesktop()
         {
-            keybd_event(WIN_KEY, 0, 0, 0);
+            keybd_event(WIN_KEY, 0, 0x0001, 0);
             keybd_event(D_KEY, 0, 0, 0);
-            keybd_event(WIN_KEY, 0, KEYUP, 0);
+
             keybd_event(D_KEY, 0, KEYUP, 0);
+            keybd_event(WIN_KEY, 0, 0x0001 | KEYUP, 0);
         }
 
         private static void closeApp()
         {
-            keybd_event(ALT_KEY, 0, 0, 0);
-            keybd_event(F4_KEY, 0, 0, 0);
-            keybd_event(ALT_KEY, 0, KEYUP, 0);
-            keybd_event(F4_KEY, 0, KEYUP, 0);
+            IntPtr activeWindow = GetForegroundWindow();
+            if (activeWindow != IntPtr.Zero)
+            {
+                PostMessage(activeWindow, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+            }
         }
 
         private static void lockPC()
         {
-            lockWorkStation();
+            LockWorkStation();
         }
     }
 }

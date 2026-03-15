@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFrameworks>net10.0-android;net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
@@ -22,7 +22,7 @@
 		<ApplicationTitle>PCmotePhone</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.pcmotephone</ApplicationId>
+		<ApplicationId>pl.ospriv.pcmotephone</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -39,11 +39,16 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<!-- App Icon -->
-		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
 
-		<!-- Splash Screen -->
-		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
+		<MauiIcon Include="Resources\AppIcon\phoneicon.svg"
+          Color="#E1F5FE"
+          BaseSize="64,64"
+          Scale="0.25" />
+
+		<MauiSplashScreen Include="Resources\Splash\iconlayers.svg"
+						  Color="#E1F5FE"
+						  BaseSize="108,108"
+						  Scale="1" />
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
@@ -54,6 +59,10 @@
 
 		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="Resources\AppIcon\phoneIcon.png" />
 	</ItemGroup>
 
 	<ItemGroup>
