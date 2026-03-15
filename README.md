@@ -50,7 +50,7 @@
 # OPTION 1:
 1. **Clone the repository:**
    ```bash
-   git clone [https://github.com/osprivPL/PCmote.git](https://github.com/osprivPL/PCmote.git)
+   git clone https://github.com/osprivPL/PCmote.git
    cd PCmote
    ```
 2. **Configure the Server**:
