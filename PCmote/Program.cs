@@ -88,11 +88,6 @@ namespace PCmote_Server
                     case "1":
                         showOptions();
                         break;
-                    /*case "2":
-                        logs = !logs;
-                        clearConsole();
-                        Console.WriteLine(logs ? "\n>>> LOGGING ENABLED <<<" : "\n>>> LOGGING DISABLED <<<");
-                        break;*/
                     case "2":
                         clearConsole();
                         break;
@@ -107,6 +102,11 @@ namespace PCmote_Server
                         break;
                     case "6":
                         editCommands();
+                        break;
+                    case "7":
+                        logs = !logs;
+                        clearConsole();
+                        Console.WriteLine(logs ? "\n>>> LOGGING ENABLED <<<" : "\n>>> LOGGING DISABLED <<<");
                         break;
                     case "0":
                         Environment.Exit(0);
@@ -191,12 +191,12 @@ namespace PCmote_Server
         {
             Console.WriteLine("\n--- MENU ---");
             Console.WriteLine("1 - Show this menu");
-            //Console.WriteLine("2 - " + (logs ? "Stop" : "Start") + " logging");
             Console.WriteLine("2 - Clear Console");
             Console.WriteLine("3 - Show network info");
             Console.WriteLine("4 - Show prepared commands");
             Console.WriteLine("5 - Add prepared command");
             Console.WriteLine("6 - Edit prepared commands");
+            Console.WriteLine("7 - Toggle logging (currently " + (logs ? "ON" : "OFF") + ")");
             Console.WriteLine("\n0 - Exit");
             Console.WriteLine("------------");
         }
@@ -372,7 +372,7 @@ namespace PCmote_Server
                                     Console.WriteLine($"[Output]:\n{output.Trim()}");
                                 }
 
-                                if (!string.IsNullOrWhiteSpace(error) && logs)
+                                if (logs && !string.IsNullOrWhiteSpace(error))
                                 {
                                     Console.WriteLine($"[OutputError]:\n{error.Trim()}");
                                 }
