@@ -21,7 +21,7 @@
 **PCmote** consists of two components: a lightweight Windows console server and a cross-platform .NET MAUI client app (`PCmotePhone`). They communicate over your local network using TCP sockets, allowing you to remotely control your computer's media, mouse, system state, and securely execute shell commands.
 
 ### ✨ Key Features
-- 🖱️ **Mouse Control:** Remote cursor movement, left/right clicks, and scrolling.
+- 🖱️ **Mouse Control:** Remote cursor movement using smartphone gyroscope, left/right clicks, and scrolling.
 - 🔊 **Volume Control:** System-wide volume up, down, and mute.
 - ⏯️ **Media Management:** Play/Pause, Next, and Previous track control using Windows API broadcasts.
 - 💻 **System Actions:** Remotely lock the PC, show the desktop, or close the active application.
