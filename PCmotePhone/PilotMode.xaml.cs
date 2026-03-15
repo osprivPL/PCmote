@@ -1,4 +1,6 @@
-﻿namespace PCmotePhone;
+﻿using System.Text;
+
+namespace PCmotePhone;
 
 public partial class PilotMode : ContentPage
 {
@@ -58,5 +60,70 @@ public partial class PilotMode : ContentPage
         {
             GlobalThings.AppStream.WriteAsync(dataToSend, 0, dataToSend.Length);
         }
+    }
+
+    private async void leftMouseButton(object sender, EventArgs e)
+    {
+        await GlobalThings.AppStream.WriteAsync(Encoding.UTF8.GetBytes("PIL_LEFTMOUSEBTN"));
+    }
+
+    private async void scrollUp(object sender, EventArgs e)
+    {
+        await GlobalThings.AppStream.WriteAsync(Encoding.UTF8.GetBytes("PIL_SCROLLUP"));
+    }
+
+    private async void scrollDown(object sender, EventArgs e)
+    {
+        await GlobalThings.AppStream.WriteAsync(Encoding.UTF8.GetBytes("PIL_SCROLLDOWN"));
+    }
+
+    private async void rightMouseButton(object sender, EventArgs e)
+    {
+        await GlobalThings.AppStream.WriteAsync(Encoding.UTF8.GetBytes("PIL_RIGHTMOUSEBTN"));
+    }
+
+    private async void prevTrack(object sender, EventArgs e)
+    {
+        await GlobalThings.AppStream.WriteAsync(Encoding.UTF8.GetBytes("PIL_PREVTRACK"));
+    }
+
+    private async void stopPauseTrack(object sender, EventArgs e)
+    {
+        await GlobalThings.AppStream.WriteAsync(Encoding.UTF8.GetBytes("PIL_PAUSERESUME"));
+    }
+
+    private async void nextTrack(object sender, EventArgs e)
+    {
+        await GlobalThings.AppStream.WriteAsync(Encoding.UTF8.GetBytes("PIL_NEXTTRACK"));
+    }
+
+    private async void volDown(object sender, EventArgs e)
+    {
+        await GlobalThings.AppStream.WriteAsync(Encoding.UTF8.GetBytes("PIL_VOLDOWN"));
+    }
+
+    private async void volMute(object sender, EventArgs e)
+    {
+        await GlobalThings.AppStream.WriteAsync(Encoding.UTF8.GetBytes("PIL_VOLMUTE"));
+    }
+
+    private async void volUp(object sender, EventArgs e)
+    {
+        await GlobalThings.AppStream.WriteAsync(Encoding.UTF8.GetBytes("PIL_VOLUP"));
+    }
+
+    private async void showDesktop(object sender, EventArgs e)
+    {
+        await GlobalThings.AppStream.WriteAsync(Encoding.UTF8.GetBytes("PIL_SHOWDESKTOP"));
+    }
+
+    private async void lockPc(object sender, EventArgs e)
+    {
+        await GlobalThings.AppStream.WriteAsync(Encoding.UTF8.GetBytes("PIL_LOCKPC"));
+    }
+
+    private async void closeApp(object sender, EventArgs e)
+    {
+        await GlobalThings.AppStream.WriteAsync(Encoding.UTF8.GetBytes("PIL_CLOSEAPP"));
     }
 }

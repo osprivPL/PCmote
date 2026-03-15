@@ -30,8 +30,8 @@ namespace PCmote_Server
         private static readonly string commandsJson = "commandsPreset.json";
         private static readonly string settingsJson = "settings.json";
         private static string commandsJsonContent;
-        
-        
+
+
 
 
         public static readonly List<string> DangerousCommands = new List<string>
@@ -116,7 +116,7 @@ namespace PCmote_Server
                         break;
                 }
             }
-        }        
+        }
 
         public static void readCommands()
         {
@@ -149,7 +149,7 @@ namespace PCmote_Server
                 Console.WriteLine($"port: {port}");
                 Console.WriteLine($"logs: {(logs ? "on" : "off")}");
             }
-            
+
         }
         public static void acceptClientsLoop(TcpListener server)
         {
@@ -215,12 +215,12 @@ namespace PCmote_Server
 
         public static void showPreparedCommands()
         {
-            for (int i = 0; i< commands.Count(); i++)
+            for (int i = 0; i < commands.Count(); i++)
             {
                 Console.WriteLine($"Header: {commands[i].header}, command: {commands[i].command}");
             }
         }
-        
+
         public static void addCommand()
         {
             clearConsole();
@@ -341,47 +341,101 @@ namespace PCmote_Server
                             byte[] jsonBytes = Encoding.UTF8.GetBytes(commandsJsonContent);
                             stream.WriteAsync(jsonBytes, 0, jsonBytes.Length);
                             if (logs) Console.WriteLine($"[Server] Sent JSON to client ({jsonBytes.Length} bytes)");
-                            continue;
                         }
-
-                        try
+                        else if (command == "PIL_PREVTRACK")
                         {
-                            if (DangerousCommands.Any(dc => command.StartsWith(dc, StringComparison.OrdinalIgnoreCase)))
+                            prevTrack();
+                        }
+                        else if (command == "PIL_PAUSERESUME")
+                        {
+                            playPauseResume();
+                        }
+                        else if (command == "PIL_NEXTTRACK")
+                        {
+                            nextTrack();
+                        }
+                        else if (command == "PIL_VOLDOWN")
+                        {
+                            volDown();
+                        }
+                        else if (command == "PIL_VOLUP")
+                        {
+                            volUp();
+                        }
+                        else if (command == "PIL_VOLMUTE")
+                        {
+                            volMute();
+                        }
+                        else if (command == "PIL_LEFTMOUSEBUTTON")
+                        {
+                            leftMouseButton();
+                        }
+                        else if (command == "PIL_RIGHTMOUSEBUTTON")
+                        {
+                            rightMouseButton();
+                        }
+                        else if (command == "PIL_SCROLLUP")
+                        {
+                            scrollUp();
+                        }
+                        else if (command == "PIL_SCROLLDOWN")
+                        {
+                            scrollDown();
+                        }
+                        else if (command == "PIL_SHOWDESKTOP")
+                        {
+                            showDesktop();
+                        }
+                        else if (command == "PIL_CLOSEAPP")
+                        {
+                            closeApp();
+                        }
+                        else if (command == "PIL_LOCKPC")
+                        {
+                            lockPC();
+                        }
+                        else
+                        {
+
+                            try
                             {
-                                throw new Exception("Command is considered dangerous and will not be executed.");
-                            }
-
-                            ProcessStartInfo psi = new ProcessStartInfo("cmd.exe", $"/c \"{command}\"")
-                            {
-                                RedirectStandardInput = true,
-                                RedirectStandardError = true,
-                                RedirectStandardOutput = true,
-                                CreateNoWindow = true,
-                                UseShellExecute = false
-                            };
-
-                            using (Process p = Process.Start(psi))
-                            {
-                                string output = p.StandardOutput.ReadToEnd();
-                                string error = p.StandardError.ReadToEnd();
-
-                                p.WaitForExit();
-
-                                if (!string.IsNullOrWhiteSpace(output))
+                                if (DangerousCommands.Any(dc => command.StartsWith(dc, StringComparison.OrdinalIgnoreCase)))
                                 {
-                                    Console.WriteLine($"[Output]:\n{output.Trim()}");
+                                    throw new Exception("Command is considered dangerous and will not be executed.");
                                 }
 
-                                if (logs && !string.IsNullOrWhiteSpace(error))
+                                ProcessStartInfo psi = new ProcessStartInfo("cmd.exe", $"/c \"{command}\"")
                                 {
-                                    Console.WriteLine($"[OutputError]:\n{error.Trim()}");
+                                    RedirectStandardInput = true,
+                                    RedirectStandardError = true,
+                                    RedirectStandardOutput = true,
+                                    CreateNoWindow = true,
+                                    UseShellExecute = false
+                                };
+
+                                using (Process p = Process.Start(psi))
+                                {
+                                    string output = p.StandardOutput.ReadToEnd();
+                                    string error = p.StandardError.ReadToEnd();
+
+                                    p.WaitForExit();
+
+                                    if (!string.IsNullOrWhiteSpace(output))
+                                    {
+                                        Console.WriteLine($"[Output]:\n{output.Trim()}");
+                                    }
+
+                                    if (!string.IsNullOrWhiteSpace(error) && logs)
+                                    {
+                                        Console.WriteLine($"[OutputError]:\n{error.Trim()}");
+                                    }
                                 }
                             }
-                        }
-                        catch (Exception ex)
-                        {
-                            if (logs) Console.WriteLine($"[Warning] {ex.Message}");
-                            continue;
+                            catch (Exception ex)
+                            {
+                                if (logs) Console.WriteLine($"[Warning] {ex.Message}");
+                                continue;
+                            }
                         }
                     }
                 }
@@ -402,7 +456,8 @@ namespace PCmote_Server
             return (IntPtr)((comm << 16));
         }
 
-        private static void prevTrack() {
+        private static void prevTrack()
+        {
             SendMessage(HWND_BROADCAST, WM_APPCOMMAND, IntPtr.Zero, calculateParam(12));
         }
 
@@ -442,7 +497,7 @@ namespace PCmote_Server
             mouse_event(0x08, 0, 0, 0, 0); // w dol
             mouse_event(0x10, 0, 0, 0, 0); // w gore
         }
-        
+
         private static void scrollUp()
         {
             mouse_event(0x0800, 0, 0, 120, 0);
