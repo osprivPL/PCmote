@@ -6,11 +6,13 @@ using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
+using Timer = System.Windows.Forms.Timer;
 
 namespace PCmote_Server
 {
     class Program
     {
+        //user32.dll ....
         [DllImport("user32.dll")]
         static extern void mouse_event(int dwFlags, int dx, int dy, int dwData, int dwExtraInfo);
         [DllImport("user32.dll")]
@@ -21,25 +23,48 @@ namespace PCmote_Server
         static extern bool LockWorkStation();
         [DllImport("user32.dll")]
         static extern IntPtr GetForegroundWindow();
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
+        [DllImport("user32.dll")]
+        static extern int DeleteMenu(IntPtr hMenu, int nPosition, int wFlags);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
+
+        [DllImport("user32.dll")]
+        static extern bool IsIconic(IntPtr hWnd);
+        [DllImport("user32.dll")]
+        static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport("kernel32.dll")]
+        static extern IntPtr GetConsoleWindow();
+
+        // PilotMode Variables (Constants)
         private const int MOUSEEVENTF_MOVE = 0x0001;
-        private const uint WM_APPCOMMAND = 0x0319;
-        private static readonly IntPtr HWND_BROADCAST = (IntPtr)0xffff;
         private const byte WIN_KEY = 0x5B;
         private const byte D_KEY = 0x44;
-        private const byte ALT_KEY = 0x12;
-        private const byte F4_KEY = 0x73;
         private const byte KEYUP = 0x0002;
         private const uint WM_CLOSE = 0x0010;
 
+        // Minimazing App Variables
+        private const int SW_HIDE = 0;
+        private const int SW_SHOW = 5;
+        private const int SW_RESTORE = 9;
+        private const int MF_BYCOMMAND = 0x00000000;
+        private const int SC_CLOSE = 0xF060;
+        private static bool isHiden = false;
 
+        //Settings Variables (mainly paths)
+        private static string filesDirectory = Environment.GetEnvironmentVariable("USERPROFILE") + "\\appdata\\roaming\\ospriv\\PCmoteServer\\";
+        private static string commandsJsonContent;
         private static readonly string commandsJson = "commandsPreset.json";
         private static readonly string settingsJson = "settings.json";
-        private static string commandsJsonContent;
-
-
-
-
+        private static int firstRun; // 0 - first run, 1 - not first run
+        private static bool autostartEnabled;
+        private static bool logs;
+        private static int port;
+        private static List<ShellCommand> commands;
         public static readonly List<string> DangerousCommands = new List<string>
         {
             // 1. Operacje na plikach i dyskach (Usuwanie, formatowanie)
@@ -61,84 +86,227 @@ namespace PCmote_Server
             "sudo", "rm", "mv", "chown", "chmod", "mkfs", "dd"
         };
 
-        private static bool logs;
-        private static int port;
-        private static List<ShellCommand> commands;
+        public static NotifyIcon trayIcon = new NotifyIcon()
+        {
+            Icon = SystemIcons.Application,
+            Text = "PCmote Server",
+            Visible = true
+        };
 
+
+        [STAThread]
         static void Main(string[] args)
-        {
-
-            readSettings();
-            readCommands();
-
-            Console.OutputEncoding = Encoding.UTF8;
-
-            showLogo();
-            showNetworkInfo();
-
-            TcpListener server = new TcpListener(IPAddress.Any, port);
-            server.Start();
-            Console.WriteLine($"\n[Server] Started. Waiting for connection on {port}...");
-
-            // nasluchiwanie polaczenia w tle (nie blokuje cmdka)
-            Task.Run(() => acceptClientsLoop(server));
-
-            showOptions();
-
-            while (true)
-            {
-                string input = Console.ReadLine();
-
-                switch (input)
-                {
-                    case "1":
-                        showOptions();
-                        break;
-                    case "2":
-                        clearConsole();
-                        break;
-                    case "3":
-                        showNetworkInfo();
-                        break;
-                    case "4":
-                        showPreparedCommands();
-                        break;
-                    case "5":
-                        addCommand();
-                        break;
-                    case "6":
-                        editCommands();
-                        break;
-                    case "7":
-                        logs = !logs;
-                        clearConsole();
-                        Console.WriteLine(logs ? "\n>>> LOGGING ENABLED <<<" : "\n>>> LOGGING DISABLED <<<");
-                        break;
-                    case "0":
-                        Environment.Exit(0);
-                        break;
-                    default:
-                        Console.WriteLine("Unknown command. Type 1 to show menu.");
-                        break;
-                }
-            }
-        }
-
-        public static void readCommands()
-        {
-            if (!File.Exists(commandsJson))
-            {
-                File.WriteAllText(commandsJson, "[]");
-            }
-
-            commandsJsonContent = File.ReadAllText(commandsJson);
-            commands = JsonSerializer.Deserialize<List<ShellCommand>>(commandsJsonContent);
-        }
-        public static void readSettings()
         {
             try
             {
-                string jsonString = File.ReadAllText(settingsJson);
+                // Disabling X button (only works with conhost, fuck windows terminal)
+                DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_CLOSE, MF_BYCOMMAND);
+                IntPtr consoleHandle = GetConsoleWindow();
+
+                trayIcon.Click += (sender, e) =>
+                {
+                    if (isHiden)
+                    {
+                        ShowWindow(consoleHandle, SW_RESTORE);
+                        SetForegroundWindow(consoleHandle);
+                        isHiden = false;
+                    }
+                    else
+                    {
+                        ShowWindow(consoleHandle, SW_HIDE);
+                        isHiden = true;
+                    }
+                }; // TrayIcon 
+
+
+                Application.ApplicationExit += (sender, e) =>
+                {
+                    trayIcon.Visible = false;
+                    trayIcon.Dispose();
+                }; // Deletes tray on exit
+
+                Timer minimizeTimer = new Timer();
+                minimizeTimer.Interval = 100;
+
+                minimizeTimer.Tick += (sender, e) =>
+                {
+                    if (IsIconic(consoleHandle) && !isHiden)
+                    {
+                        {
+                            ShowWindow(consoleHandle, SW_HIDE);
+                            isHiden = true;
+                        }
+                    }
+                };   //checksIsHidden every 100ms (in case user tries to minimize with keyboard or something)
+                minimizeTimer.Start();
+
+                if (args.Contains("--autostart"))
+                {
+                    isHiden = true;
+                }
+
+                isFirstRun();
+                isAutostartEnabled();
+
+                if (firstRun == 0)
+                {
+                    createFiles();
+                }
+                else
+                {
+                    readFiles();
+                }
+
+
+                Console.OutputEncoding = Encoding.UTF8;
+
+                showLogo();
+                showNetworkInfo();
+
+                TcpListener server = new TcpListener(IPAddress.Any, port);
+                server.Start();
+                Console.WriteLine($"\n[Server] Started. Waiting for connection on {port}...");
+
+                // nasluchiwanie polaczenia w tle (nie blokuje cmdka)
+                Task.Run(() => acceptClientsLoop(server));
+
+                showOptions();
+
+                Task.Run(() =>
+                {
+                    while (true)
+                    {
+                        string input = Console.ReadLine();
+
+                        switch (input)
+                        {
+                            case "1":
+                                showOptions();
+                                break;
+                            case "2":
+                                clearConsole();
+                                break;
+                            case "3":
+                                showNetworkInfo();
+                                break;
+                            case "4":
+                                showPreparedCommands();
+                                break;
+                            case "5":
+                                addCommand();
+                                break;
+                            case "6":
+                                editCommands();
+                                break;
+                            case "7":
+                                logs = !logs;
+                                clearConsole();
+                                Console.WriteLine(logs ? "\n>>> LOGGING ENABLED <<<" : "\n>>> LOGGING DISABLED <<<");
+                                break;
+                            case "8":
+                                toggleAutostart();
+                                clearConsole();
+                                Console.WriteLine(autostartEnabled ? "\n>>> AUTOSTART ENABLED <<<" : "\n>>> AUTOSTART DISABLED <<<");
+                                break;
+                            case "0":
+                                trayIcon.Visible = false;
+                                trayIcon.Dispose();
+                                Environment.Exit(0);
+                                break;
+                            default:
+                                Console.WriteLine("Unknown command. Type 1 to show menu.");
+                                break;
+                        }
+                    }
+                });
+
+                Application.Run();
+            }
+            catch (Exception ex)
+            {
+                trayIcon.Visible = false;
+                trayIcon.Dispose();
+                Application.Exit();
+            }
+        }
+
+        public static void isFirstRun()
+        {
+            if (Directory.Exists(filesDirectory))
+            {
+                firstRun = 1;
+            }
+            else
+            {
+                firstRun = 0;
+                Directory.CreateDirectory(filesDirectory);
+            }
+        }
+
+        public static void isAutostartEnabled()
+        {
+            string startupFolder = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
+            string shortcutPath = Path.Combine(startupFolder, "PCmote_Server.lnk");
+            if (File.Exists(shortcutPath))
+            {
+                autostartEnabled = true;
+            }
+            else
+            {
+                autostartEnabled = false;
+            }
+        }
+
+        public static void createFiles()
+        {
+            try
+            {
+                File.WriteAllText(filesDirectory + commandsJson, "[]");
+                File.WriteAllText(filesDirectory + settingsJson, "{\n  \"logs\": false,\n  \"port\": \"5555\"\n}");
+            }
+            catch
+            {
+                Console.WriteLine("Program doesn't have permissions to write files in this directory: " + filesDirectory + "\nEvery change done at this session will be forgotten");
+            }
+        }
+
+        public static void createStartupShortcut()
+        {
+            try
+            {
+                string startupFolder = Environment.GetFolderPath(Environment.SpecialFolder.Startup); // shell:startup
+                string shortcutPath = Path.Combine(startupFolder, "PCmote_Server.lnk");
+
+                //Executable path and working directory
+                string exePath = Process.GetCurrentProcess().MainModule.FileName;
+                string workingDirectory = Path.GetDirectoryName(exePath);
+
+                Type t = Type.GetTypeFromProgID("WScript.Shell");
+                dynamic shell = Activator.CreateInstance(t);
+
+                dynamic shortcut = shell.CreateShortcut(shortcutPath);
+                shortcut.TargetPath = exePath;
+                shortcut.WorkingDirectory = workingDirectory;
+                shortcut.Arguments = "--autostart";
+                shortcut.Description = "Run PCmote Server in Background";
+
+                shortcut.Save();
+
+            }
+            catch (Exception ex)
+            {
+                if (logs) Console.WriteLine($"Failed to create startup shortcut: {ex.Message}");
+            }
+        }
+
+        public static void readFiles()
+        {
+            try
+            {
+                commandsJsonContent = File.ReadAllText(filesDirectory + commandsJson);
+                commands = JsonSerializer.Deserialize<List<ShellCommand>>(commandsJsonContent);
+
+                string jsonString = File.ReadAllText(filesDirectory + settingsJson);
 
                 using (JsonDocument doc = JsonDocument.Parse(jsonString))
                 {
@@ -151,11 +319,10 @@ namespace PCmote_Server
             {
                 port = 5555;
                 logs = false;
-                Console.WriteLine("Something went wrong with reading \"settings.json\", using default values:");
+                Console.WriteLine("Something went wrong with reading settings, using default values:");
                 Console.WriteLine($"port: {port}");
                 Console.WriteLine($"logs: {(logs ? "on" : "off")}");
             }
-
         }
         public static void acceptClientsLoop(TcpListener server)
         {
@@ -165,7 +332,6 @@ namespace PCmote_Server
                 string clientIp = ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString();
 
                 if (logs) Console.WriteLine($"\n[Server] Connected with client: {clientIp}");
-
 
                 Task.Run(() => handleClient(client, clientIp));
             }
@@ -203,6 +369,7 @@ namespace PCmote_Server
             Console.WriteLine("5 - Add prepared command");
             Console.WriteLine("6 - Edit prepared commands");
             Console.WriteLine("7 - Toggle logging (currently " + (logs ? "ON" : "OFF") + ")");
+            Console.WriteLine("8 - Toggle autostart (currently " +(autostartEnabled ? "ON" : "OFF") + ")");
             Console.WriteLine("\n0 - Exit");
             Console.WriteLine("------------");
         }
@@ -297,6 +464,25 @@ namespace PCmote_Server
             {
                 clearConsole();
                 Console.WriteLine($"\nError: {ex.Message}");
+            }
+        }
+
+        public static void toggleAutostart()
+        {
+            if (autostartEnabled)
+            {
+                autostartEnabled = false;
+                string startupFolder = Environment.GetFolderPath(Environment.SpecialFolder.Startup); // shell:startup
+                string shortcutPath = Path.Combine(startupFolder, "PCmote_Server.lnk");
+                if (File.Exists(shortcutPath))
+                {
+                    File.Delete(shortcutPath);
+                }
+            }
+            else
+            {
+                autostartEnabled = true;
+                createStartupShortcut();
             }
         }
 
@@ -402,7 +588,6 @@ namespace PCmote_Server
                         }
                         else
                         {
-
                             try
                             {
                                 if (DangerousCommands.Any(dc => command.StartsWith(dc, StringComparison.OrdinalIgnoreCase)))
@@ -426,9 +611,9 @@ namespace PCmote_Server
 
                                     p.WaitForExit();
 
-                                    if (!string.IsNullOrWhiteSpace(output))
+                                    if (!string.IsNullOrWhiteSpace(output) && logs)
                                     {
-                                        Console.WriteLine($"[Output]:\n{output.Trim()}");
+                                        Console.WriteLine("[Output]:\n{output.Trim()}");
                                     }
 
                                     if (!string.IsNullOrWhiteSpace(error) && logs)
