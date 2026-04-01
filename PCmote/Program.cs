@@ -18,7 +18,7 @@ namespace PCmote_Server
 
         public static NotifyIcon trayIcon = new NotifyIcon()
         {
-            Icon = SystemIcons.Application,
+            Icon = Icon.ExtractAssociatedIcon(Environment.ProcessPath),
             Text = "PCmote Server",
             Visible = true
         };
