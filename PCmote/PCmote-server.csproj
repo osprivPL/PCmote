@@ -9,6 +9,8 @@
 		<ApplicationIcon>Assets\serverIcon.ico</ApplicationIcon>
 		<PackageIcon>serverIcon.png</PackageIcon>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<FileVersion>1.0.1</FileVersion>
+		<Version>1.0.1</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
