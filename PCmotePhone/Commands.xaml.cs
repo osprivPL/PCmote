@@ -110,7 +110,7 @@ public partial class Commands : ContentPage
                     var deserializedJson = JsonSerializer.Deserialize<ShellCommand[]>(json);
                     foreach (var obj in deserializedJson ?? Array.Empty<ShellCommand>())
                     {
-                        createCommandView(obj.header, obj.command);
+                        createCommandView(obj.Header, obj.Command);
                     }
 
                     //await DisplayAlertAsync("Sukces!", $"Wczytano komend: {deserializedJson?.Length ?? 0}", "OK");
