@@ -155,5 +155,32 @@ namespace PCmote_server.Handlers
                 FileHandler.createStartupShortcut();
             }
         }
+
+        public static void isFirstRun()
+        {
+            if (Directory.Exists(FileHandler.filesDirectory))
+            {
+                GlobalVariables.firstRun = false;
+            }
+            else
+            {
+                GlobalVariables.firstRun = true;
+                Directory.CreateDirectory(FileHandler.filesDirectory);
+            }
+        }
+
+        public static void isAutostartEnabled()
+        {
+            string startupFolder = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
+            string shortcutPath = Path.Combine(startupFolder, "PCmote_Server.lnk");
+            if (File.Exists(shortcutPath))
+            {
+                GlobalVariables.autostartEnabled = true;
+            }
+            else
+            {
+                GlobalVariables.autostartEnabled = false;
+            }
+        }
     }
 }

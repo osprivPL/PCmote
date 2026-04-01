@@ -6,7 +6,7 @@ namespace PCmote_server.Handlers
 {
     public class FileHandler
     {
-        public static string filesDirectory = Environment.GetEnvironmentVariable("USERPROFILE") + "\\appdata\\roaming\\ospriv\\PCmoteServer\\";
+        public static string filesDirectory = Path.Combine(Environment.GetEnvironmentVariable("USERPROFILE"),  "\\appdata\\roaming\\ospriv\\PCmoteServer\\");
         public static string commandsJsonContent;
         public static readonly string commandsJson = "commandsPreset.json";
         public static readonly string settingsJson = "settings.json";
