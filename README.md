@@ -35,7 +35,7 @@
 - **C# & .NET 10**
 - **.NET MAUI** (for the mobile/desktop client)
 - **TCP Sockets** (for fast, local client-server communication)
-- **Windows API (`user32.dll`)** (for deep system integration on the server side)
+- **Windows API (`user32.dll`, `kernel32.dll`)** (for deep system integration on the server side)
 
 ---
 
@@ -70,9 +70,14 @@
 5. Connect:
   Ensure both devices are on the same local network. The server console will display your local IP address upon startup. Enter this IP and the configured port into the client app to establish a connection.
    
-# OPTION 2:
-  Doesn't exist (yet)
+# OPTION 2 (Recomended for users):
+  1. Open releases section
+  
+  2. Download newest version of server (`PCmote-server.exe`) and client (`PCmote-phone.apk`)
 
+  3. Run server
+
+  4. Install app on your phone
 
 
 # 🤝 Contributing
