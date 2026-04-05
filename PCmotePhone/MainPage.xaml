@@ -16,13 +16,12 @@
                             <ColumnDefinition Width="auto"/>
                         </Grid.ColumnDefinitions>
                         <Entry x:Name="IpEntry" Placeholder="Computer IP (for example: 192.168.1.15)" Keyboard="Url" 
-                            Text="192.168.15.104" Grid.Column="0" Margin="0,0,2,0"/>
-                        <ImageButton Source="history.svg" Grid.Column="1" BackgroundColor="Transparent" WidthRequest="32" HeightRequest="32"/> 
+                            Text="" Grid.Column="0" Margin="0,0,2,0"/>
+                        <ImageButton Source="history.svg" Grid.Column="1" BackgroundColor="Transparent" WidthRequest="32" HeightRequest="32" Clicked="showHistoryOfIps"/>
                     </Grid>
                 </Border>
 
 
-                <!--Text="192.168.15.104" -->
                 <Border StrokeShape="RoundRectangle 12,12,12,12" Padding="8,0,8,0">
                     <Entry x:Name="PortEntry" Placeholder="Port (for example: 5555)" Keyboard="Numeric" Text="5555" />
                 </Border>

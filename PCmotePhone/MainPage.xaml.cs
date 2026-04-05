@@ -1,17 +1,28 @@
-﻿using System.Net.Sockets;
+﻿using System.Collections.ObjectModel;
+using System.Net.Sockets;
+using System.Text.Json;
 
 namespace PCmotePhone
 {
     public partial class MainPage : ContentPage
     {
         
-
-        // Zmienna, która mówi nam, czy celowo trzymamy połączenie
         private bool _isConnected = false;
+        public ObservableCollection<string> SavedIps { get; set; } = new ObservableCollection<string>();
+
 
         public MainPage()
         {
             InitializeComponent();
+            BindingContext = this;
+            string savedJson = Preferences.Default.Get("SavedIPs", string.Empty);
+
+            if (!string.IsNullOrEmpty(savedJson))
+            {
+                SavedIps = JsonSerializer.Deserialize<ObservableCollection<string>>(savedJson);
+            }
+
+            IpEntry.Text = SavedIps.FirstOrDefault() ?? string.Empty;
         }
 
         private async void ConnectBtn_Clicked(object sender, EventArgs e)
@@ -27,19 +38,28 @@ namespace PCmotePhone
 
             try
             {
-                // 1. Tworzymy klienta i łączymy (bez bloku "using", bo chcemy go zatrzymać!)
                 GlobalThings.AppClient = new TcpClient();
                 await GlobalThings.AppClient.ConnectAsync(IpEntry.Text, port);
                 GlobalThings.AppStream = GlobalThings.AppClient.GetStream();
 
                 _isConnected = true;
 
-                // 2. Uruchamiamy "strażnika" połączenia w tle (nie blokuje on aplikacji)
                 _ = Task.Run(MonitorConnectionAsync);
 
-                // 3. Puszczamy użytkownika do menu
                 ConnectionLayout.IsVisible = false;
                 MenuLayout.IsVisible = true;
+                if (!SavedIps.Contains(IpEntry.Text))
+                {
+                    SavedIps.Add(IpEntry.Text);
+                    SavedIps.Move(SavedIps.Count - 1, 0); 
+                }
+                else
+                {
+                    SavedIps.Move(SavedIps.IndexOf(IpEntry.Text), 0);
+                }
+
+                string jsonToSave = JsonSerializer.Serialize(SavedIps);
+                Preferences.Default.Set("SavedIPs", jsonToSave);
             }
             catch (Exception ex)
             {
@@ -48,35 +68,26 @@ namespace PCmotePhone
             }
         }
 
-        // Metoda działająca w tle, która wykrywa zerwanie połączenia
         private async Task MonitorConnectionAsync()
         {
             try
             {
                 while (_isConnected)
                 {
-                    // Sprawdzamy stan co sekundę, żeby nie zamęczyć procesora telefonu
                     await Task.Delay(1000);
 
-                    // Wyciągamy surowe gniazdo sieciowe (Socket) z naszego klienta
                     Socket socket = GlobalThings.AppClient.Client;
 
-                    // Logika: 
-                    // socket.Poll z SelectRead zwraca true jeśli przyszły dane LUB jeśli przerwano połączenie.
-                    // socket.Available mówi nam, ile bajtów czeka na odczyt.
-                    // Zatem: jeśli Poll = true, ale Available = 0, to wiemy na 100%, że to rozłączenie (brak danych, a gniazdo reaguje).
                     if ((socket == null) || (socket.Poll(1000, SelectMode.SelectRead) && socket.Available == 0))
                     {
-                        break; // Serwer zamknął połączenie
+                        break; 
                     }
                 }
             }
             catch
             {
-                // Wystąpił błąd sieci (np. telefon stracił zasięg, ucięto Wi-Fi)
             }
 
-            // Jeśli pętla się przerwała, a my nie kliknęliśmy "Rozłącz", to znaczy że to awaria
             if (_isConnected)
             {
                 _isConnected = false;
@@ -92,8 +103,6 @@ namespace PCmotePhone
 
         private void DisconnectBtn_Clicked(object sender, EventArgs e)
         {
-            // Zmieniamy flagę, żeby "strażnik" wiedział, że rozłączamy się celowo
-            // i nie wyrzucał alertu o awarii
             _isConnected = false;
             DisconnectAndResetUI();
         }
@@ -101,11 +110,9 @@ namespace PCmotePhone
         // Funkcja sprzątająca
         private void DisconnectAndResetUI()
         {
-            // Zamykamy rurę i kuriera
             GlobalThings.AppStream?.Close();
             GlobalThings.AppClient?.Close();
 
-            // Przywracamy ekran logowania
             MenuLayout.IsVisible = false;
             ConnectionLayout.IsVisible = true;
         }
@@ -118,6 +125,21 @@ namespace PCmotePhone
         private void openCommands(object sender, EventArgs e)
         {
             Navigation.PushAsync(new Commands());
+        }
+
+        private async void showHistoryOfIps(object sender, EventArgs e)
+        {
+            if (SavedIps.Count == 0)
+            {
+                await DisplayAlertAsync("History", "There are no saved ips", "OK");
+                return;
+            }
+            string choosenIp = await DisplayActionSheetAsync("Choose saved IP", "Cancel", null, SavedIps.ToArray());
+
+            if (choosenIp != "Cancel" && !string.IsNullOrEmpty(choosenIp))
+            {
+                IpEntry.Text = choosenIp;
+            }
         }
     }
 }
