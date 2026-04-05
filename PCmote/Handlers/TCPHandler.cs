@@ -17,7 +17,7 @@ namespace PCmote_server.Handlers
                             if (GlobalVariables.logs) Console.WriteLine($"[Server] Sent JSON to client ({jsonBytes.Length} bytes)");
                         }},
                         { "PIL_PREVTRACK", _ => PilotCommandHandler.prevTrack() },
-                        { "PIL_PLAYPAUSERESUME",_ => PilotCommandHandler.playPauseResume() },
+                        { "PIL_PAUSERESUME",_ => PilotCommandHandler.playPauseResume() },
                         { "PIL_NEXTTRACK",_ => PilotCommandHandler.nextTrack() },
                         { "PIL_VOLDOWN",_ => PilotCommandHandler.volDown() },
                         { "PIL_VOLUP",_ => PilotCommandHandler.volUp() },

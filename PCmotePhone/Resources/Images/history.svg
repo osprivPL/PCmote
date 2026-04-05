@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="512"
+   height="512"
+   viewBox="0 0 135.46666 135.46666"
+   version="1.1"
+   id="svg1"
+   inkscape:export-filename="history.svg"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   sodipodi:docname="history.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="1.0167041"
+     inkscape:cx="189.82908"
+     inkscape:cy="282.77648"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <marker
+       style="overflow:visible"
+       id="ArrowWideRounded"
+       refX="-1"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Wide, rounded arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:round"
+         d="M 3,-3 0,0 3,3"
+         transform="rotate(180,0.125,0)"
+         sodipodi:nodetypes="ccc"
+         id="path2" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="ArrowTriangleStylized"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Stylized triangle arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="m 6,0 c -3,1 -7,3 -9,5 0,0 0,-4 2,-5 -2,-1 -2,-5 -2,-5 2,2 6,4 9,5 z"
+         id="path4" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="ArrowWideHeavy"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Wide, heavy arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+         d="m 1,0 -3,3 h -2 l 3,-3 -3,-3 h 2 z"
+         id="path3" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Triangle"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Triangle arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135" />
+    </marker>
+    <inkscape:path-effect
+       effect="powerstroke"
+       message=""
+       id="path-effect2"
+       is_visible="true"
+       lpeversion="1.3"
+       scale_width="1"
+       interpolator_type="CubicBezierJohan"
+       interpolator_beta="0.2"
+       start_linecap_type="zerowidth"
+       end_linecap_type="zerowidth"
+       offset_points="1,1"
+       linejoin_type="extrp_arc"
+       miter_limit="4"
+       not_jump="false"
+       sort_points="true" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g7"
+       transform="translate(3.9570337)">
+      <g
+         id="g1"
+         transform="translate(-30.702896,-64.21917)">
+        <path
+           style="fill:none;stroke:#000000;stroke-width:2.64583;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#ArrowWideRounded)"
+           id="path1"
+           d="m -56.676552,-131.93867 a 41.771378,41.771378 0 0 1 -25.786163,38.591716 41.771378,41.771378 0 0 1 -45.522035,-9.054896 41.771378,41.771378 0 0 1 -9.0549,-45.52204 41.771378,41.771378 0 0 1 38.591721,-25.78616"
+           sodipodi:type="arc"
+           sodipodi:arc-type="arc"
+           sodipodi:start="0"
+           sodipodi:end="4.712389"
+           sodipodi:ry="41.771378"
+           sodipodi:rx="41.771378"
+           sodipodi:cy="-131.93867"
+           sodipodi:cx="-98.447929"
+           sodipodi:open="true"
+           transform="scale(-1)" />
+        <path
+           style="fill:none;stroke:#000000;stroke-width:2.64583;stroke-linecap:round;stroke-dasharray:2.64583, 5.29166;stroke-dashoffset:0;stroke-opacity:1"
+           id="path1-1"
+           d="M -173.73773,98.424507 A 41.771378,41.771378 0 0 1 -131.96635,56.65313"
+           sodipodi:type="arc"
+           sodipodi:arc-type="arc"
+           sodipodi:start="3.1415927"
+           sodipodi:end="4.712389"
+           sodipodi:ry="41.771378"
+           sodipodi:rx="41.771378"
+           sodipodi:cy="98.424507"
+           sodipodi:cx="-131.96635"
+           sodipodi:open="true"
+           transform="rotate(-90)" />
+      </g>
+      <g
+         id="g2">
+        <rect
+           style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:2.17091;stroke-linecap:round;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+           id="rect2"
+           width="5.0927744"
+           height="28.602356"
+           x="64.128609"
+           y="44.436314"
+           ry="2.5463872" />
+        <rect
+           style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:2.17091;stroke-linecap:round;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+           id="rect2-2"
+           width="5.0927744"
+           height="28.602356"
+           x="26.00341"
+           y="-118.88774"
+           ry="2.5463872"
+           transform="rotate(119.52033)" />
+      </g>
+    </g>
+  </g>
+</svg>

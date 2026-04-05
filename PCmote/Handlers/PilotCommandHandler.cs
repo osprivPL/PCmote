@@ -16,10 +16,6 @@ namespace PCmote_server.Handlers
             WindowsInterop.keybd_event(key, 0, KEYUP, 0);
         }
 
-        private static IntPtr calculateParam(int comm)
-        {
-            return (IntPtr)((comm << 16));
-        }
         public static void prevTrack()
         {
             sendKey(0xB1);

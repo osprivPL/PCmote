@@ -9,7 +9,6 @@ namespace PCmote_Server
 {
     class Program
     {
-        // Minimazing App Variables
         private const int SW_HIDE = 0;
         private const int SW_RESTORE = 9;
         private const int MF_BYCOMMAND = 0x00000000;
@@ -31,7 +30,14 @@ namespace PCmote_Server
             {
                 // Disabling X button (only works with conhost, fuck windows terminal)
                 WindowsInterop.DeleteMenu(WindowsInterop.GetSystemMenu(WindowsInterop.GetConsoleWindow(), false), SC_CLOSE, MF_BYCOMMAND);
+
                 IntPtr consoleHandle = WindowsInterop.GetConsoleWindow();
+
+                if (args.Contains("--autostart"))
+                {
+                    isHiden = true;
+                    WindowsInterop.ShowWindow(consoleHandle, SW_HIDE);
+                }
 
                 trayIcon.Click += (sender, e) =>
                 {
@@ -47,6 +53,7 @@ namespace PCmote_Server
                         isHiden = true;
                     }
                 }; // TrayIcon 
+
 
 
                 Application.ApplicationExit += (sender, e) =>
@@ -70,10 +77,6 @@ namespace PCmote_Server
                 };   //checksIsHidden every 100ms (in case user tries to minimize with keyboard or something)
                 minimizeTimer.Start();
 
-                if (args.Contains("--autostart"))
-                {
-                    isHiden = true;
-                }
 
                 ConsoleHandler.isFirstRun();
                 ConsoleHandler.isAutostartEnabled();
