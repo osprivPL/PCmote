@@ -46,16 +46,23 @@ namespace PCmote_server.Handlers
             sendKey(0xAD);
         }
 
-        public static void leftMouseButton()
+        public static void leftMouseButtonPressed()
         {
-            WindowsInterop.mouse_event(0x02, 0, 0, 0, 0); // w dol
-            WindowsInterop.mouse_event(0x04, 0, 0, 0, 0); // w gore
+            WindowsInterop.mouse_event(0x02, 0, 0, 0, 0); // pressed
         }
 
-        public static void rightMouseButton()
+        public static void leftMouseButtonReleased()
         {
-            WindowsInterop.mouse_event(0x08, 0, 0, 0, 0); // w dol
-            WindowsInterop.mouse_event(0x10, 0, 0, 0, 0); // w gore
+            WindowsInterop.mouse_event(0x04, 0, 0, 0, 0); // released
+        }
+
+        public static void rightMouseButtonPressed()
+        {
+            WindowsInterop.mouse_event(0x08, 0, 0, 0, 0); // pressed
+        }
+        public static void rightMouseButtonReleased()
+        {
+            WindowsInterop.mouse_event(0x10, 0, 0, 0, 0); // released
         }
 
         public static void scrollUp()

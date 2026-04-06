@@ -12,9 +12,9 @@
                 Padding="15">
                 <Grid ColumnDefinitions="*, Auto, *" ColumnSpacing="15" VerticalOptions="Center">
 
-                    <Button Grid.Column="0" Text="Lewy" FontSize="16" FontAttributes="Bold"
+                    <Button Grid.Column="0" Text="Left" FontSize="16" FontAttributes="Bold"
                         BackgroundColor="{DynamicResource Primary}" TextColor="White" 
-                        CornerRadius="12" HeightRequest="90" Clicked="leftMouseButton"/>
+                        CornerRadius="12" HeightRequest="90" Pressed="leftMouseButtonPressed" Released="leftMouseButtonReleased"/>
 
                     <VerticalStackLayout Grid.Column="1" Spacing="10" VerticalOptions="Center">
                         <Button Text="▲" FontSize="18" WidthRequest="50" HeightRequest="40" 
@@ -23,9 +23,9 @@
                             BackgroundColor="{DynamicResource Secondary}" TextColor="White" CornerRadius="8" Clicked="scrollDown"/>
                     </VerticalStackLayout>
 
-                    <Button Grid.Column="2" Text="Prawy" FontSize="16" FontAttributes="Bold"
+                    <Button Grid.Column="2" Text="Right" FontSize="16" FontAttributes="Bold"
                         BackgroundColor="{DynamicResource Primary}" TextColor="White" 
-                        CornerRadius="12" HeightRequest="90" Clicked="rightMouseButton"/>
+                        CornerRadius="12" HeightRequest="90" Pressed="rightMouseButtonPressed" Released="rightMouseButtonReleased"/>
                 </Grid>
             </Border>
 

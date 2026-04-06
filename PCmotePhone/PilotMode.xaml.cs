@@ -19,7 +19,7 @@ public partial class PilotMode : ContentPage
         {
             Gyroscope.Default.ReadingChanged += Gyroscope_ReadingChanged;
 
-            // Game daje około 50 odswiezen na sekunde, wiec n spali tel xd
+            // Game about 50Hz
             Gyroscope.Default.Start(SensorSpeed.Game);
         }
     }
@@ -50,21 +50,24 @@ public partial class PilotMode : ContentPage
         if (deltaX == 0 && deltaY == 0) return;
 
 
-        //Format: MOUSE:X:Y\n (bo tcp skleja wiadomosci)
-        // Invariant Culture by byla kropka zamiast przecinka
+        //Format: MOUSE:X:Y\n (tcp connects messages)
+        // Invariant Culture to have dot as separator
         string msg = $"MOUSE:{deltaX.ToString(System.Globalization.CultureInfo.InvariantCulture)}:{deltaY.ToString(System.Globalization.CultureInfo.InvariantCulture)}\n";
         byte[] dataToSend = System.Text.Encoding.UTF8.GetBytes(msg);
 
-        // async by n blokowalo tel
         if (GlobalThings.AppStream != null)
         {
             GlobalThings.AppStream.WriteAsync(dataToSend, 0, dataToSend.Length);
         }
     }
 
-    private async void leftMouseButton(object sender, EventArgs e)
+    private async void leftMouseButtonPressed(object sender, EventArgs e)
     {
-        await GlobalThings.AppStream.WriteAsync(Encoding.UTF8.GetBytes("PIL_LEFTMOUSEBTN\n"));
+        await GlobalThings.AppStream.WriteAsync(Encoding.UTF8.GetBytes("PIL_LEFTMOUSEBTNP\n"));
+    }
+    private async void leftMouseButtonReleased(object sender, EventArgs e)
+    {
+        await GlobalThings.AppStream.WriteAsync(Encoding.UTF8.GetBytes("PIL_LEFTMOUSEBTNR\n"));
     }
 
     private async void scrollUp(object sender, EventArgs e)
@@ -77,9 +80,13 @@ public partial class PilotMode : ContentPage
         await GlobalThings.AppStream.WriteAsync(Encoding.UTF8.GetBytes("PIL_SCROLLDOWN\n"));
     }
 
-    private async void rightMouseButton(object sender, EventArgs e)
+    private async void rightMouseButtonPressed(object sender, EventArgs e)
     {
-        await GlobalThings.AppStream.WriteAsync(Encoding.UTF8.GetBytes("PIL_RIGHTMOUSEBTN\n"));
+        await GlobalThings.AppStream.WriteAsync(Encoding.UTF8.GetBytes("PIL_RIGHTMOUSEBTNP\n"));
+    }
+    private async void rightMouseButtonReleased(object sender, EventArgs e)
+    {
+        await GlobalThings.AppStream.WriteAsync(Encoding.UTF8.GetBytes("PIL_RIGHTMOUSEBTNR\n"));
     }
 
     private async void prevTrack(object sender, EventArgs e)

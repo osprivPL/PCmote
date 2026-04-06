@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -22,8 +20,10 @@ namespace PCmote_server.Handlers
                         { "PIL_VOLDOWN",_ => PilotCommandHandler.volDown() },
                         { "PIL_VOLUP",_ => PilotCommandHandler.volUp() },
                         { "PIL_VOLMUTE",_ => PilotCommandHandler.volMute() },
-                        { "PIL_LEFTMOUSEBTN",_ => PilotCommandHandler.leftMouseButton() },
-                        { "PIL_RIGHTMOUSEBTN",_ => PilotCommandHandler.rightMouseButton() },
+                        { "PIL_LEFTMOUSEBTNP",_ => PilotCommandHandler.leftMouseButtonPressed() },
+                        { "PIL_RIGHTMOUSEBTNP",_ => PilotCommandHandler.rightMouseButtonPressed() },
+                        { "PIL_LEFTMOUSEBTNR",_=>PilotCommandHandler.leftMouseButtonReleased()},
+                        { "PIL_RIGHTMOUSEBTNR",_=>PilotCommandHandler.rightMouseButtonReleased()},
                         { "PIL_SCROLLUP",_ => PilotCommandHandler.scrollUp() },
                         { "PIL_SCROLLDOWN",_ => PilotCommandHandler.scrollDown() },
                         { "PIL_SHOWDESKTOP",_ => PilotCommandHandler.showDesktop() },
