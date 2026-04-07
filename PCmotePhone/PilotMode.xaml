@@ -2,72 +2,64 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="PCmotePhone.PilotMode"
-             Title="PilotMode">
-    <ScrollView>
-        <VerticalStackLayout Spacing="20" Padding="15">
+             Title="PilotMode"
+             HideSoftInputOnTapped="False"
+             Shell.NavBarIsVisible="False" 
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="{DynamicResource PageBackgroundColor}">
+    <Grid BackgroundColor="{DynamicResource PageBackgroundColor}">
 
-            <Border StrokeShape="RoundRectangle 15" 
-                StrokeThickness="1" Stroke="Gray" 
-                BackgroundColor="{DynamicResource PageBackgroundColor}" 
-                Padding="15">
-                <Grid ColumnDefinitions="*, Auto, *" ColumnSpacing="15" VerticalOptions="Center">
+        <ScrollView>
+            <VerticalStackLayout Spacing="20" Padding="15">
 
-                    <Button Grid.Column="0" Text="Left" FontSize="16" FontAttributes="Bold"
-                        BackgroundColor="{DynamicResource Primary}" TextColor="White" 
-                        CornerRadius="12" HeightRequest="90" Pressed="leftMouseButtonPressed" Released="leftMouseButtonReleased"/>
+                <VerticalStackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="BringKeyboard" />
+                </VerticalStackLayout.GestureRecognizers>
 
-                    <VerticalStackLayout Grid.Column="1" Spacing="10" VerticalOptions="Center">
-                        <Button Text="▲" FontSize="18" WidthRequest="50" HeightRequest="40" 
-                            BackgroundColor="{DynamicResource Secondary}" TextColor="White" CornerRadius="8" Clicked="scrollUp"/>
-                        <Button Text="▼" FontSize="18" WidthRequest="50" HeightRequest="40" 
-                            BackgroundColor="{DynamicResource Secondary}" TextColor="White" CornerRadius="8" Clicked="scrollDown"/>
-                    </VerticalStackLayout>
+                <Border StrokeShape="RoundRectangle 15" StrokeThickness="1" Stroke="Gray" BackgroundColor="{DynamicResource PageBackgroundColor}" Padding="15">
+                    <Grid ColumnDefinitions="*, Auto, *" ColumnSpacing="15" VerticalOptions="Center">
+                        <Button Grid.Column="0" Text="Left" FontSize="16" FontAttributes="Bold" BackgroundColor="{DynamicResource Primary}" TextColor="White" CornerRadius="12" HeightRequest="90" Pressed="leftMouseButtonPressed" Released="leftMouseButtonReleased"/>
+                        <VerticalStackLayout Grid.Column="1" Spacing="10" VerticalOptions="Center">
+                            <Button Text="▲" FontSize="18" WidthRequest="50" HeightRequest="40" BackgroundColor="{DynamicResource Secondary}" TextColor="White" CornerRadius="8" Clicked="scrollUp"/>
+                            <Button Text="▼" FontSize="18" WidthRequest="50" HeightRequest="40" BackgroundColor="{DynamicResource Secondary}" TextColor="White" CornerRadius="8" Clicked="scrollDown"/>
+                        </VerticalStackLayout>
+                        <Button Grid.Column="2" Text="Right" FontSize="16" FontAttributes="Bold" BackgroundColor="{DynamicResource Primary}" TextColor="White" CornerRadius="12" HeightRequest="90" Pressed="rightMouseButtonPressed" Released="rightMouseButtonReleased"/>
+                    </Grid>
+                </Border>
 
-                    <Button Grid.Column="2" Text="Right" FontSize="16" FontAttributes="Bold"
-                        BackgroundColor="{DynamicResource Primary}" TextColor="White" 
-                        CornerRadius="12" HeightRequest="90" Pressed="rightMouseButtonPressed" Released="rightMouseButtonReleased"/>
-                </Grid>
-            </Border>
+                <Border StrokeShape="RoundRectangle 15" StrokeThickness="1" Stroke="Gray" BackgroundColor="{DynamicResource PageBackgroundColor}" Padding="15">
+                    <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, *, *" RowSpacing="15" ColumnSpacing="15">
+                        <Button Grid.Row="0" Grid.Column="0" Text="⏪" FontSize="24" BackgroundColor="{DynamicResource Primary}" TextColor="White" CornerRadius="12" HeightRequest="65" Clicked="prevTrack" />
+                        <Button Grid.Row="0" Grid.Column="1" Text="⏯" FontSize="24" BackgroundColor="{DynamicResource Primary}" TextColor="White" CornerRadius="12" HeightRequest="65" Clicked="stopPauseTrack"/>
+                        <Button Grid.Row="0" Grid.Column="2" Text="⏩" FontSize="24" BackgroundColor="{DynamicResource Primary}" TextColor="White" CornerRadius="12" HeightRequest="65" Clicked="nextTrack"/>
+                        <Button Grid.Row="1" Grid.Column="0" Text="🔉" FontSize="24" BackgroundColor="{DynamicResource Secondary}" TextColor="White" CornerRadius="12" HeightRequest="65" Clicked="volDown"/>
+                        <Button Grid.Row="1" Grid.Column="1" Text="🔇" FontSize="24" BackgroundColor="{DynamicResource Secondary}" TextColor="White" CornerRadius="12" HeightRequest="65" Clicked="volMute"/>
+                        <Button Grid.Row="1" Grid.Column="2" Text="🔊" FontSize="24" BackgroundColor="{DynamicResource Secondary}" TextColor="White" CornerRadius="12" HeightRequest="65" Clicked="volUp"/>
+                    </Grid>
+                </Border>
 
-            <Border StrokeShape="RoundRectangle 15" 
-                StrokeThickness="1" Stroke="Gray" 
-                BackgroundColor="{DynamicResource PageBackgroundColor}" 
-                Padding="15">
-                <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, *, *" RowSpacing="15" ColumnSpacing="15">
+                <Border StrokeShape="RoundRectangle 15" StrokeThickness="1" Stroke="Gray" BackgroundColor="{DynamicResource PageBackgroundColor}" Padding="15" Margin="0, 0, 0, 400">
+                    <Grid ColumnDefinitions="*, *, *" ColumnSpacing="10">
+                        <Button Grid.Column="0" Text="🖥️ Desktop" FontSize="13" FontAttributes="Bold" BackgroundColor="{DynamicResource Primary}" TextColor="White" CornerRadius="10" HeightRequest="60" Clicked="showDesktop"/>
+                        <Button Grid.Column="1" Text="🔒 Lock PC" FontSize="13" FontAttributes="Bold" BackgroundColor="{DynamicResource Primary}" TextColor="White" CornerRadius="10" HeightRequest="60" Clicked="lockPc"/>
+                        <Button Grid.Column="2" Text="❌ Close App" FontSize="13" FontAttributes="Bold" BackgroundColor="#D32F2F" TextColor="White" CornerRadius="10" HeightRequest="60" Clicked="closeApp"/>
+                    </Grid>
+                </Border>
 
-                    <Button Grid.Row="0" Grid.Column="0" Text="⏪" FontSize="24" 
-                        BackgroundColor="{DynamicResource Primary}" TextColor="White" CornerRadius="12" HeightRequest="65" Clicked="prevTrack" />
-                    <Button Grid.Row="0" Grid.Column="1" Text="⏯" FontSize="24" 
-                        BackgroundColor="{DynamicResource Primary}" TextColor="White" CornerRadius="12" HeightRequest="65" Clicked="stopPauseTrack"/>
-                    <Button Grid.Row="0" Grid.Column="2" Text="⏩" FontSize="24" 
-                        BackgroundColor="{DynamicResource Primary}" TextColor="White" CornerRadius="12" HeightRequest="65" Clicked="nextTrack"/>
+            </VerticalStackLayout>
+        </ScrollView>
 
-                    <Button Grid.Row="1" Grid.Column="0" Text="🔉" FontSize="24" 
-                        BackgroundColor="{DynamicResource Secondary}" TextColor="White" CornerRadius="12" HeightRequest="65" Clicked="volDown"/>
-                    <Button Grid.Row="1" Grid.Column="1" Text="🔇" FontSize="24" 
-                        BackgroundColor="{DynamicResource Secondary}" TextColor="White" CornerRadius="12" HeightRequest="65" Clicked="volMute"/>
-                    <Button Grid.Row="1" Grid.Column="2" Text="🔊" FontSize="24" 
-                        BackgroundColor="{DynamicResource Secondary}" TextColor="White" CornerRadius="12" HeightRequest="65" Clicked="volUp"/>
-                </Grid>
-            </Border>
+        <Entry x:Name="HiddenKeyboardInput" 
+               Opacity="0" 
+               WidthRequest="1" 
+               HeightRequest="1" 
+               VerticalOptions="Start"
+               Keyboard="Plain"
+               HorizontalOptions="Start"
+               IsSpellCheckEnabled="False"
+               IsTextPredictionEnabled="False"
+               Unfocused="HiddenKeyboardInput_Unfocused"
+               TextChanged="HiddenKeyboardInput_TextChanged" />
 
-            <Border StrokeShape="RoundRectangle 15" 
-                StrokeThickness="1" Stroke="Gray" 
-                BackgroundColor="{DynamicResource PageBackgroundColor}" 
-                Padding="15">
-                <Grid ColumnDefinitions="*, *, *" ColumnSpacing="10">
-
-                    <Button Grid.Column="0" Text="🖥️ Desktop" FontSize="13" FontAttributes="Bold"
-                        BackgroundColor="{DynamicResource Primary}" TextColor="White" CornerRadius="10" HeightRequest="60" Clicked="showDesktop"/>
-
-                    <Button Grid.Column="1" Text="🔒 Lock PC" FontSize="13" FontAttributes="Bold"
-                        BackgroundColor="{DynamicResource Primary}" TextColor="White" CornerRadius="10" HeightRequest="60" Clicked="lockPc"/>
-
-                    <Button Grid.Column="2" Text="❌ Close App" FontSize="13" FontAttributes="Bold"
-                        BackgroundColor="#D32F2F" TextColor="White" CornerRadius="10" HeightRequest="60" Clicked="closeApp"/>
-                </Grid>
-            </Border>
-
-        </VerticalStackLayout>
-    </ScrollView>
+    </Grid>
 </ContentPage>

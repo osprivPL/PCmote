@@ -36,6 +36,9 @@ namespace PCmote_server
         [DllImport("user32.dll")]
         public static extern bool SetForegroundWindow(IntPtr hWnd);
 
+        [DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
+        public static extern short VkKeyScan(char ch);
+
         [DllImport("kernel32.dll")]
         public static extern IntPtr GetConsoleWindow();
     }

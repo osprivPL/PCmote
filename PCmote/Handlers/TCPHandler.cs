@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.VisualBasic.Devices;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -7,29 +8,29 @@ namespace PCmote_server.Handlers
 {
     public class TCPHandler
     {
-        private static Dictionary<string, Action<NetworkStream>> commandActions = new Dictionary<string, Action<NetworkStream>>
-                    {
-                        { "GET_JSON", (NetworkStream stream) => {
-                            byte[] jsonBytes = Encoding.UTF8.GetBytes(FileHandler.readCommandsFile());
-                            stream.WriteAsync(jsonBytes, 0, jsonBytes.Length);
-                            if (GlobalVariables.logs) Console.WriteLine($"[Server] Sent JSON to client ({jsonBytes.Length} bytes)");
-                        }},
-                        { "PIL_PREVTRACK", _ => PilotCommandHandler.prevTrack() },
-                        { "PIL_PAUSERESUME",_ => PilotCommandHandler.playPauseResume() },
-                        { "PIL_NEXTTRACK",_ => PilotCommandHandler.nextTrack() },
-                        { "PIL_VOLDOWN",_ => PilotCommandHandler.volDown() },
-                        { "PIL_VOLUP",_ => PilotCommandHandler.volUp() },
-                        { "PIL_VOLMUTE",_ => PilotCommandHandler.volMute() },
-                        { "PIL_LEFTMOUSEBTNP",_ => PilotCommandHandler.leftMouseButtonPressed() },
-                        { "PIL_RIGHTMOUSEBTNP",_ => PilotCommandHandler.rightMouseButtonPressed() },
-                        { "PIL_LEFTMOUSEBTNR",_=>PilotCommandHandler.leftMouseButtonReleased()},
-                        { "PIL_RIGHTMOUSEBTNR",_=>PilotCommandHandler.rightMouseButtonReleased()},
-                        { "PIL_SCROLLUP",_ => PilotCommandHandler.scrollUp() },
-                        { "PIL_SCROLLDOWN",_ => PilotCommandHandler.scrollDown() },
-                        { "PIL_SHOWDESKTOP",_ => PilotCommandHandler.showDesktop() },
-                        { "PIL_CLOSEAPP",_ => PilotCommandHandler.closeApp() },
-                        { "PIL_LOCKPC",_ => PilotCommandHandler.lockPC() }
-                    };
+        private static Dictionary<string, Action<NetworkStream>> commandActions = new Dictionary<string, Action<NetworkStream>> {
+                { "GET_JSON", (NetworkStream stream) => {
+                    byte[] jsonBytes = Encoding.UTF8.GetBytes(FileHandler.readCommandsFile());
+                    stream.WriteAsync(jsonBytes, 0, jsonBytes.Length);
+                    if (GlobalVariables.logs) Console.WriteLine($"[Server] Sent JSON to client ({jsonBytes.Length} bytes)");
+
+                }},
+                { "PIL_PREVTRACK", _ => PilotCommandHandler.prevTrack() },
+                { "PIL_PAUSERESUME",_ => PilotCommandHandler.playPauseResume() },
+                { "PIL_NEXTTRACK",_ => PilotCommandHandler.nextTrack() },
+                { "PIL_VOLDOWN",_ => PilotCommandHandler.volDown() },
+                { "PIL_VOLUP",_ => PilotCommandHandler.volUp() },
+                { "PIL_VOLMUTE",_ => PilotCommandHandler.volMute() },
+                { "PIL_LEFTMOUSEBTNP",_ => PilotCommandHandler.leftMouseButtonPressed() },
+                { "PIL_RIGHTMOUSEBTNP",_ => PilotCommandHandler.rightMouseButtonPressed() },
+                { "PIL_LEFTMOUSEBTNR",_=>PilotCommandHandler.leftMouseButtonReleased()},
+                { "PIL_RIGHTMOUSEBTNR",_=>PilotCommandHandler.rightMouseButtonReleased()},
+                { "PIL_SCROLLUP",_ => PilotCommandHandler.scrollUp() },
+                { "PIL_SCROLLDOWN",_ => PilotCommandHandler.scrollDown() },
+                { "PIL_SHOWDESKTOP",_ => PilotCommandHandler.showDesktop() },
+                { "PIL_CLOSEAPP",_ => PilotCommandHandler.closeApp() },
+                { "PIL_LOCKPC",_ => PilotCommandHandler.lockPC() },
+            };
 
 
         public static void acceptClientsLoop(TcpListener server)
@@ -61,12 +62,19 @@ namespace PCmote_server.Handlers
 
                     foreach (string cmd in commandsList)
                     {
-                        string command = cmd.Trim();
+                        string command = cmd.Trim('\r', '\n');
                         if (string.IsNullOrWhiteSpace(command)) continue;
 
                         if (command.StartsWith("MOUSE:"))
                         {
                             MouseHandler.moveMouse(command);
+                            continue;
+                        }
+                        if (command.StartsWith("PIL_KEYBOARD:"))
+                        {
+                            string[] parts = command.Split(':', 2);
+                            string key = parts.Length > 1 ? parts[1] : string.Empty;
+                            PilotCommandHandler.keyboardKey(key);
                             continue;
                         }
 

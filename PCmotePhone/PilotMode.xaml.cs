@@ -4,8 +4,10 @@ namespace PCmotePhone;
 
 public partial class PilotMode : ContentPage
 {
-    private const double Sensitivity = 27.5;
-    private const double Deadzone = 0.05;
+    private const double _sensitivy = 27.5;
+    private const double _deadzone = 0.05;
+    private bool _isClearingText = false;
+    string temp = "";
 
     public PilotMode()
 	{
@@ -22,6 +24,11 @@ public partial class PilotMode : ContentPage
             // Game about 50Hz
             Gyroscope.Default.Start(SensorSpeed.Game);
         }
+
+        Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(200), () =>
+        {
+            HiddenKeyboardInput.Focus();
+        });
     }
 
     protected override void OnDisappearing()
@@ -33,7 +40,6 @@ public partial class PilotMode : ContentPage
             Gyroscope.Default.Stop();
         }
     }
-
     private void Gyroscope_ReadingChanged(object sender, GyroscopeChangedEventArgs e)
     {
         var data = e.Reading.AngularVelocity;
@@ -41,11 +47,11 @@ public partial class PilotMode : ContentPage
         double gyroZ = data.Z;
         double gyroX = data.X;
 
-        if (Math.Abs(gyroZ) < Deadzone) gyroZ = 0;
-        if (Math.Abs(gyroX) < Deadzone) gyroX = 0;
+        if (Math.Abs(gyroZ) < _deadzone) gyroZ = 0;
+        if (Math.Abs(gyroX) < _deadzone) gyroX = 0;
 
-        double deltaX = -gyroZ * Sensitivity;
-        double deltaY = -gyroX * Sensitivity;
+        double deltaX = -gyroZ * _sensitivy;
+        double deltaY = -gyroX * _sensitivy;
 
         if (deltaX == 0 && deltaY == 0) return;
 
@@ -60,6 +66,52 @@ public partial class PilotMode : ContentPage
             GlobalThings.AppStream.WriteAsync(dataToSend, 0, dataToSend.Length);
         }
     }
+
+    //Keyboard:
+
+    private void BringKeyboard(object sender, EventArgs e)
+    {
+        HiddenKeyboardInput.Unfocus();
+        HiddenKeyboardInput.Focus();
+        HiddenKeyboardInput.ShowSoftInputAsync(CancellationToken.None);
+    }
+
+    private void HiddenKeyboardInput_Unfocused(object sender, EventArgs e)
+    {
+        Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(200),() =>
+        {
+            HiddenKeyboardInput.Unfocus();
+            HiddenKeyboardInput.Focus();
+            HiddenKeyboardInput.ShowSoftInputAsync(CancellationToken.None);
+        });
+    }
+
+    private async void HiddenKeyboardInput_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        if (_isClearingText) return;
+
+        string newText = e.NewTextValue;
+
+        if (!string.IsNullOrEmpty(newText)) {
+            char lastChar = newText.Last();
+            string msg = $"PIL_KEYBOARD:{lastChar}\n";
+            
+            temp+= lastChar;
+            await GlobalThings.AppStream.WriteAsync(Encoding.UTF8.GetBytes(msg));
+            if (temp.Length >= 5)
+            {
+                await DisplayAlertAsync("A", temp, "OK");
+                temp = "";
+            }
+
+            _isClearingText = true;
+            HiddenKeyboardInput.Text = string.Empty;
+            _isClearingText = false;
+        }
+    }
+
+
+    //Buttons:
 
     private async void leftMouseButtonPressed(object sender, EventArgs e)
     {
