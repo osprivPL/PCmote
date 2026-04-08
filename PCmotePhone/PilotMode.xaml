@@ -11,10 +11,10 @@
 
         <ScrollView>
             <VerticalStackLayout Spacing="20" Padding="15">
-
                 <VerticalStackLayout.GestureRecognizers>
                     <TapGestureRecognizer Tapped="BringKeyboard" />
                 </VerticalStackLayout.GestureRecognizers>
+                <Label Text="{}" x:Name="lblOutput"/>
 
                 <Border StrokeShape="RoundRectangle 15" StrokeThickness="1" Stroke="Gray" BackgroundColor="{DynamicResource PageBackgroundColor}" Padding="15">
                     <Grid ColumnDefinitions="*, Auto, *" ColumnSpacing="15" VerticalOptions="Center">
@@ -45,8 +45,9 @@
                         <Button Grid.Column="2" Text="❌ Close App" FontSize="13" FontAttributes="Bold" BackgroundColor="#D32F2F" TextColor="White" CornerRadius="10" HeightRequest="60" Clicked="closeApp"/>
                     </Grid>
                 </Border>
-
+                
             </VerticalStackLayout>
+            
         </ScrollView>
 
         <Entry x:Name="HiddenKeyboardInput" 
@@ -55,6 +56,7 @@
                HeightRequest="1" 
                VerticalOptions="Start"
                Keyboard="Plain"
+               Text=" "
                HorizontalOptions="Start"
                IsSpellCheckEnabled="False"
                IsTextPredictionEnabled="False"

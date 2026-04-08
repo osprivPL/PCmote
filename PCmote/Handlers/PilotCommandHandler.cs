@@ -25,6 +25,13 @@ namespace PCmote_server.Handlers
             if (string.IsNullOrEmpty(key)) return;
 
             char znak = key[0];
+
+            if (znak == '\b')
+            {
+                backspaceKey();
+                return;
+            }
+
             short vkCodeWithState = WindowsInterop.VkKeyScan(znak);
             byte keyToPress = (byte)(vkCodeWithState & 0xFF);
             byte shiftState = (byte)((vkCodeWithState >> 8) & 0xFF);
@@ -41,6 +48,12 @@ namespace PCmote_server.Handlers
             if (needShift) WindowsInterop.keybd_event(VK_SHIFT, 0, KEYUP, 0);
             if (needCtrl) WindowsInterop.keybd_event(VK_CONTROL, 0, KEYUP, 0);
             if (needAlt) WindowsInterop.keybd_event(VK_MENU, 0, KEYUP, 0);
+        }
+
+        public static void backspaceKey()
+        {
+            sendKey(0x08);
+
         }
 
         public static void prevTrack()
