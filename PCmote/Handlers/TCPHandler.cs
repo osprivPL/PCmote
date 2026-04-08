@@ -30,6 +30,11 @@ namespace PCmote_server.Handlers
                 { "PIL_SHOWDESKTOP",_ => PilotCommandHandler.showDesktop() },
                 { "PIL_CLOSEAPP",_ => PilotCommandHandler.closeApp() },
                 { "PIL_LOCKPC",_ => PilotCommandHandler.lockPC() },
+                { "PIL_BACKSPACE",_ => {
+                    Console.WriteLine("Backspace command received");
+                    PilotCommandHandler.backspaceKey();
+                }
+            }
             };
 
 

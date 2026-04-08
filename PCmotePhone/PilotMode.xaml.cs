@@ -71,16 +71,14 @@ public partial class PilotMode : ContentPage
 
     private void BringKeyboard(object sender, EventArgs e)
     {
-        HiddenKeyboardInput.Unfocus();
         HiddenKeyboardInput.Focus();
         HiddenKeyboardInput.ShowSoftInputAsync(CancellationToken.None);
     }
 
     private void HiddenKeyboardInput_Unfocused(object sender, EventArgs e)
     {
-        Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(200),() =>
+        Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(500), () =>
         {
-            HiddenKeyboardInput.Unfocus();
             HiddenKeyboardInput.Focus();
             HiddenKeyboardInput.ShowSoftInputAsync(CancellationToken.None);
         });
@@ -90,22 +88,38 @@ public partial class PilotMode : ContentPage
     {
         if (_isClearingText) return;
 
-        string newText = e.NewTextValue;
+        string oldText = e.OldTextValue ?? "";
+        string newText = e.NewTextValue ?? "";
 
-        if (!string.IsNullOrEmpty(newText)) {
-            char lastChar = newText.Last();
-            string msg = $"PIL_KEYBOARD:{lastChar}\n";
-            
-            temp+= lastChar;
-            await GlobalThings.AppStream.WriteAsync(Encoding.UTF8.GetBytes(msg));
-            if (temp.Length >= 5)
+        lblOutput.Text = newText.Replace(' ', '_');
+
+        if (newText.Length < oldText.Length)
+        {
+            await GlobalThings.AppStream.WriteAsync(Encoding.UTF8.GetBytes("PIL_BACKSPACE\n"));
+        }
+        else if (newText.Length > oldText.Length)
+        {
+            char addedChar = '\0';
+
+            for (int i = 0; i < newText.Length; i++)
             {
-                await DisplayAlertAsync("A", temp, "OK");
-                temp = "";
+                if (i >= oldText.Length || newText[i] != oldText[i])
+                {
+                    addedChar = newText[i];
+                    break;
+                }
             }
 
+            if (addedChar != '\0')
+            {
+                await GlobalThings.AppStream.WriteAsync(Encoding.UTF8.GetBytes($"PIL_KEYBOARD:{addedChar}\n"));
+            }
+        }
+
+        if (newText.Length == 0 || newText.Length > 50)
+        {
             _isClearingText = true;
-            HiddenKeyboardInput.Text = string.Empty;
+            HiddenKeyboardInput.Text = " ";
             _isClearingText = false;
         }
     }
